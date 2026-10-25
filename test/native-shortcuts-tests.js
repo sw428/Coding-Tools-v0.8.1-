@@ -15,5 +15,5 @@ for(const id of ['codingTools.smartCopy','codingTools.smartPaste','codingTools.c
 }
 assert.ok(binds.some(e=>e.command==='codingTools.copy1'));
 assert.ok(binds.some(e=>e.command==='codingTools.paste1'));
-assert.ok(pkg.displayName.includes('β'));
+assert.ok(pkg.description.includes('β'), 'description must identify the beta release');
 console.log('native-shortcuts-tests: passed');

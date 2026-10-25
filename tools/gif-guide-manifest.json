@@ -1,0 +1,3773 @@
+{
+  "version": "0.8.2",
+  "date": "2026-10-26",
+  "kind": "操作説明用の仮想画面。実機録画ではありません。",
+  "demos": [
+    {
+      "id": "01",
+      "slug": "next-class",
+      "title": "次のクラス名を選ぶ",
+      "category": "クラス選択",
+      "commands": [
+        "codingTools.nextClass"
+      ],
+      "description": "キーを押すたびに、次のクラス名へ選択が移ります。",
+      "note": "",
+      "key": "Ctrl + Alt + J",
+      "mac": "Cmd + Alt + J",
+      "steps": [
+        {
+          "action": "card を選択している状態",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 0,
+              "start": 12,
+              "length": 4
+            }
+          ]
+        },
+        {
+          "action": "Ctrl + Alt + J を押す",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 0,
+              "start": 17,
+              "length": 9
+            }
+          ]
+        },
+        {
+          "action": "もう一度押すと、次の行へ",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 1,
+              "start": 13,
+              "length": 11
+            }
+          ]
+        },
+        {
+          "action": "さらに押すと card__text へ",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 2,
+              "start": 12,
+              "length": 10
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "02",
+      "slug": "previous-class",
+      "title": "前のクラス名を選ぶ",
+      "category": "クラス選択",
+      "commands": [
+        "codingTools.previousClass"
+      ],
+      "description": "後ろから前へ、クラス名を1つずつ選べます。",
+      "note": "",
+      "key": "Ctrl + Alt + K",
+      "mac": "Cmd + Alt + K",
+      "steps": [
+        {
+          "action": "card__text を選択している状態",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 2,
+              "start": 12,
+              "length": 10
+            }
+          ]
+        },
+        {
+          "action": "Ctrl + Alt + K で1つ前へ",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 1,
+              "start": 13,
+              "length": 11
+            }
+          ]
+        },
+        {
+          "action": "もう一度押すと is-active へ",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 0,
+              "start": 17,
+              "length": 9
+            }
+          ]
+        },
+        {
+          "action": "もう一度押すと card へ",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 0,
+              "start": 12,
+              "length": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "03",
+      "slug": "extend-next-class",
+      "title": "次のクラスも追加選択する",
+      "category": "クラス選択",
+      "commands": [
+        "codingTools.extendNextClass"
+      ],
+      "description": "元の選択を残し、次のクラス名を追加します。",
+      "note": "",
+      "key": "Ctrl + Alt + Shift + J",
+      "mac": "Cmd + Alt + Shift + J",
+      "steps": [
+        {
+          "action": "card を選択",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 0,
+              "start": 12,
+              "length": 4
+            }
+          ]
+        },
+        {
+          "action": "Ctrl + Alt + Shift + J",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 0,
+              "start": 12,
+              "length": 4
+            },
+            {
+              "row": 0,
+              "start": 17,
+              "length": 9
+            }
+          ]
+        },
+        {
+          "action": "もう一度押して3つを同時選択",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 0,
+              "start": 12,
+              "length": 4
+            },
+            {
+              "row": 0,
+              "start": 17,
+              "length": 9
+            },
+            {
+              "row": 1,
+              "start": 13,
+              "length": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "04",
+      "slug": "extend-previous-class",
+      "title": "前のクラスも追加選択する",
+      "category": "クラス選択",
+      "commands": [
+        "codingTools.extendPreviousClass"
+      ],
+      "description": "元の選択を残し、前のクラス名を追加します。",
+      "note": "",
+      "key": "Ctrl + Alt + Shift + K",
+      "mac": "Cmd + Alt + Shift + K",
+      "steps": [
+        {
+          "action": "card__text を選択",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 2,
+              "start": 12,
+              "length": 10
+            }
+          ]
+        },
+        {
+          "action": "Ctrl + Alt + Shift + K",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 2,
+              "start": 12,
+              "length": 10
+            },
+            {
+              "row": 1,
+              "start": 13,
+              "length": 11
+            }
+          ]
+        },
+        {
+          "action": "もう一度押して is-active も追加",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 2,
+              "start": 12,
+              "length": 10
+            },
+            {
+              "row": 1,
+              "start": 13,
+              "length": 11
+            },
+            {
+              "row": 0,
+              "start": 17,
+              "length": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "05",
+      "slug": "copy-slot1",
+      "title": "保存枠1へコピーする",
+      "category": "コピー・貼り付け",
+      "commands": [
+        "codingTools.copy1"
+      ],
+      "description": "選んだ文字を保存枠1に覚えさせます。コピーだけではコードは変わりません。",
+      "note": "",
+      "key": "Ctrl + Alt + Shift + 1",
+      "mac": "Cmd + Alt + Shift + 1",
+      "steps": [
+        {
+          "action": "保存したい文字を選択",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 1,
+              "start": 13,
+              "length": 11
+            }
+          ]
+        },
+        {
+          "action": "Ctrl + Alt + Shift + 1 を押す",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 1,
+              "start": 13,
+              "length": 11
+            }
+          ],
+          "toast": "1にコピーしました（クラス名）"
+        },
+        {
+          "action": "保存枠1に残る。もう片方の枠はそのまま",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "info": [
+            "保存枠1：card__title",
+            "コードの変更：なし"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "06",
+      "slug": "paste-slot1",
+      "title": "保存枠1から貼り付ける",
+      "category": "コピー・貼り付け",
+      "commands": [
+        "codingTools.paste1"
+      ],
+      "description": "保存枠1に覚えた内容を、今のカーソル位置へ貼り付けます。",
+      "note": "",
+      "key": "Ctrl + Alt + 1",
+      "mac": "Cmd + Alt + 1",
+      "steps": [
+        {
+          "action": "先に保存枠1へコピーしておく",
+          "lines": [
+            "<div class=\"\">",
+            "</div>"
+          ],
+          "info": [
+            "保存枠1：card__title"
+          ],
+          "marks": [
+            {
+              "row": 0,
+              "start": 12,
+              "length": 0
+            }
+          ]
+        },
+        {
+          "action": "貼り付けたい位置で Ctrl + Alt + 1",
+          "lines": [
+            "<div class=\"card__title\">",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 0,
+              "start": 12,
+              "length": 11
+            }
+          ]
+        },
+        {
+          "action": "同じ枠は何度でも貼り付けられる",
+          "lines": [
+            "<div class=\"card__title\">",
+            "</div>"
+          ],
+          "toast": "1を貼り付けました"
+        }
+      ]
+    },
+    {
+      "id": "07",
+      "slug": "copy-slot2",
+      "title": "保存枠2へコピーする",
+      "category": "コピー・貼り付け",
+      "commands": [
+        "codingTools.copy2"
+      ],
+      "description": "選んだ文字を保存枠2に覚えさせます。コピーだけではコードは変わりません。",
+      "note": "",
+      "key": "Ctrl + Alt + Shift + 2",
+      "mac": "Cmd + Alt + Shift + 2",
+      "steps": [
+        {
+          "action": "保存したい文字を選択",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 2,
+              "start": 12,
+              "length": 10
+            }
+          ]
+        },
+        {
+          "action": "Ctrl + Alt + Shift + 2 を押す",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 2,
+              "start": 12,
+              "length": 10
+            }
+          ],
+          "toast": "2にコピーしました（クラス名）"
+        },
+        {
+          "action": "保存枠2に残る。もう片方の枠はそのまま",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "info": [
+            "保存枠2：card__text",
+            "コードの変更：なし"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "08",
+      "slug": "paste-slot2",
+      "title": "保存枠2から貼り付ける",
+      "category": "コピー・貼り付け",
+      "commands": [
+        "codingTools.paste2"
+      ],
+      "description": "保存枠2に覚えた内容を、今のカーソル位置へ貼り付けます。",
+      "note": "",
+      "key": "Ctrl + Alt + 2",
+      "mac": "Cmd + Alt + 2",
+      "steps": [
+        {
+          "action": "先に保存枠2へコピーしておく",
+          "lines": [
+            "<div class=\"\">",
+            "</div>"
+          ],
+          "info": [
+            "保存枠2：card__text"
+          ],
+          "marks": [
+            {
+              "row": 0,
+              "start": 12,
+              "length": 0
+            }
+          ]
+        },
+        {
+          "action": "貼り付けたい位置で Ctrl + Alt + 2",
+          "lines": [
+            "<div class=\"card__text\">",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 0,
+              "start": 12,
+              "length": 10
+            }
+          ]
+        },
+        {
+          "action": "同じ枠は何度でも貼り付けられる",
+          "lines": [
+            "<div class=\"card__text\">",
+            "</div>"
+          ],
+          "toast": "2を貼り付けました"
+        }
+      ]
+    },
+    {
+      "id": "09",
+      "slug": "choose-copy-slot",
+      "title": "一覧でコピー先の枠を選ぶ",
+      "category": "コピー・貼り付け",
+      "commands": [
+        "codingTools.chooseCopySlot"
+      ],
+      "description": "番号を覚えていなくても、一覧から保存枠を選べます。",
+      "note": "",
+      "key": "コマンドパレットから実行",
+      "mac": "コマンドパレットから実行",
+      "steps": [
+        {
+          "action": "コピーする文字を選択",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 1,
+              "start": 13,
+              "length": 11
+            }
+          ]
+        },
+        {
+          "action": "「コピー先を一覧から選択」を実行",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "menu": [
+            "1：未保存",
+            "2：card__text"
+          ],
+          "focus": 0,
+          "menuTitle": "コピー先の番号を選択（1〜2）"
+        },
+        {
+          "action": "枠1を選んで Enter",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "toast": "1にコピーしました（クラス名）"
+        }
+      ]
+    },
+    {
+      "id": "10",
+      "slug": "choose-paste-slot",
+      "title": "一覧で貼り付け元の枠を選ぶ",
+      "category": "コピー・貼り付け",
+      "commands": [
+        "codingTools.choosePasteSlot"
+      ],
+      "description": "保存してある文字を見ながら、使う枠を選べます。",
+      "note": "",
+      "key": "コマンドパレットから実行",
+      "mac": "コマンドパレットから実行",
+      "steps": [
+        {
+          "action": "貼り付けたい位置にカーソルを置く",
+          "lines": [
+            "<div class=\"\">",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 0,
+              "start": 12,
+              "length": 0
+            }
+          ]
+        },
+        {
+          "action": "「貼り付け元を一覧から選択」を実行",
+          "lines": [
+            "<div class=\"\">",
+            "</div>"
+          ],
+          "menu": [
+            "1：card__title",
+            "2：card__text"
+          ],
+          "focus": 1,
+          "menuTitle": "貼り付ける番号を選択（1〜2）"
+        },
+        {
+          "action": "枠2を選んで Enter",
+          "lines": [
+            "<div class=\"card__text\">",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 0,
+              "start": 12,
+              "length": 10
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "11",
+      "slug": "copy-class-name",
+      "title": "カーソル上のクラス名をコピー",
+      "category": "コピー・貼り付け",
+      "commands": [
+        "codingTools.copyClassName"
+      ],
+      "description": "クラス名の上にカーソルを置くだけで、その名前をコピーできます。",
+      "note": "",
+      "key": "Ctrl + Alt + Shift + C",
+      "mac": "Cmd + Alt + Shift + C",
+      "steps": [
+        {
+          "action": "CSSのクラス名にカーソルを置く",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "marks": [
+            {
+              "row": 4,
+              "start": 6,
+              "length": 0
+            }
+          ]
+        },
+        {
+          "action": "Ctrl + Alt + Shift + C",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "toast": "クラス名「card__title」をコピー"
+        },
+        {
+          "action": "コピーされる文字はドットなし",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "info": [
+            "クリップボード：card__title",
+            "保存枠1・2へのコピーとは別の操作"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "12",
+      "slug": "smart-copy",
+      "title": "スマートコピーでドットを外す",
+      "category": "コピー・貼り付け",
+      "commands": [
+        "codingTools.smartCopy"
+      ],
+      "description": "クラス名全体を選んで実行すると、ドットなしの名前をコピーします。",
+      "note": "",
+      "key": "コマンドパレットから実行",
+      "mac": "コマンドパレットから実行",
+      "steps": [
+        {
+          "action": "CSSで .card__title 全体を選択",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "marks": [
+            {
+              "row": 4,
+              "start": 0,
+              "length": 12
+            }
+          ]
+        },
+        {
+          "action": "「スマートコピー」を実行",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "toast": "「card__title」をコピー（ドットなし）"
+        },
+        {
+          "action": "検索欄などにも使える文字になる",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "info": [
+            "クリップボード：card__title",
+            "通常の文字の選択は、標準のコピーとして処理"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "13",
+      "slug": "smart-paste",
+      "title": "スマート貼り付けでドットを付ける",
+      "category": "コピー・貼り付け",
+      "commands": [
+        "codingTools.smartPaste"
+      ],
+      "description": "拡張機能でコピーしたクラスを、CSSの入力中の位置へ貼り付けます。",
+      "note": "空いている場所で実行した場合は、CSSの追加先を判断する処理へ進みます。",
+      "key": "コマンドパレットから実行",
+      "mac": "コマンドパレットから実行",
+      "steps": [
+        {
+          "action": "拡張機能で card__title をコピー済み",
+          "lines": [
+            ".card > "
+          ],
+          "tab": "style.css",
+          "info": [
+            "クリップボード：card__title"
+          ],
+          "marks": [
+            {
+              "row": 0,
+              "start": 8,
+              "length": 0
+            }
+          ]
+        },
+        {
+          "action": "「CSSスマート貼り付け」を実行",
+          "lines": [
+            ".card > .card__title"
+          ],
+          "tab": "style.css",
+          "marks": [
+            {
+              "row": 0,
+              "start": 8,
+              "length": 12
+            }
+          ]
+        },
+        {
+          "action": "CSSではドット付きで入力される",
+          "lines": [
+            ".card > .card__title"
+          ],
+          "tab": "style.css",
+          "toast": "Ctrl + V の標準動作は変更しません"
+        }
+      ]
+    },
+    {
+      "id": "14",
+      "slug": "html-to-css",
+      "title": "HTMLからCSS定義へ移動",
+      "category": "HTMLとCSSの移動",
+      "commands": [
+        "codingTools.jumpToCss"
+      ],
+      "description": "HTMLのクラス名を選んで、対応するCSSの場所へ直接移動します。",
+      "note": "",
+      "key": "Ctrl + Alt + 3",
+      "mac": "Cmd + Alt + 3",
+      "steps": [
+        {
+          "action": "HTMLの card__title を選択",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 1,
+              "start": 13,
+              "length": 11
+            }
+          ]
+        },
+        {
+          "action": "Ctrl + Alt + 3 を押す",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "marks": [
+            {
+              "row": 4,
+              "start": 0,
+              "length": 12
+            }
+          ]
+        },
+        {
+          "action": "CSSの定義が選択される",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "marks": [
+            {
+              "row": 4,
+              "start": 0,
+              "length": 12
+            }
+          ],
+          "toast": "ジャンプ先 1 / 2　Tab：次　Shift+Tab：前　Esc：終了"
+        }
+      ]
+    },
+    {
+      "id": "15",
+      "slug": "css-to-html",
+      "title": "CSSからHTMLの使用箇所へ移動",
+      "category": "HTMLとCSSの移動",
+      "commands": [
+        "codingTools.jumpToHtml"
+      ],
+      "description": "CSSのクラス名から、そのクラスを使っているHTMLへ移動します。",
+      "note": "",
+      "key": "Ctrl + Alt + 4",
+      "mac": "Cmd + Alt + 4",
+      "steps": [
+        {
+          "action": "CSSの .card__title を選択",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "marks": [
+            {
+              "row": 4,
+              "start": 0,
+              "length": 12
+            }
+          ]
+        },
+        {
+          "action": "Ctrl + Alt + 4 を押す",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 1,
+              "start": 13,
+              "length": 11
+            }
+          ]
+        },
+        {
+          "action": "HTMLの使用箇所が選択される",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 1,
+              "start": 13,
+              "length": 11
+            }
+          ],
+          "toast": "クラス名を選択。コードの変更はありません"
+        }
+      ]
+    },
+    {
+      "id": "16",
+      "slug": "next-jump-candidate",
+      "title": "次のジャンプ候補へ移動",
+      "category": "HTMLとCSSの移動",
+      "commands": [
+        "codingTools.cycleNextJump"
+      ],
+      "description": "ジャンプ先が複数あるとき、Tabで次の候補へ移れます。",
+      "note": "ジャンプ候補の切り替え中だけ、Tabがこの操作になります。",
+      "key": "Tab",
+      "mac": "Tab",
+      "steps": [
+        {
+          "action": "HTML→CSSのジャンプ直後",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "marks": [
+            {
+              "row": 4,
+              "start": 0,
+              "length": 12
+            }
+          ],
+          "toast": "ジャンプ先 1 / 2"
+        },
+        {
+          "action": "Tab を押す",
+          "lines": [
+            "@media (min-width: 768px) {",
+            "  .card__title {",
+            "    font-size: 32px;",
+            "  }",
+            "}"
+          ],
+          "tab": "style.css",
+          "marks": [
+            {
+              "row": 1,
+              "start": 2,
+              "length": 12
+            }
+          ],
+          "toast": "ジャンプ先 2 / 2"
+        },
+        {
+          "action": "さらに Tab で最初の候補へ戻る",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "marks": [
+            {
+              "row": 4,
+              "start": 0,
+              "length": 12
+            }
+          ],
+          "toast": "ジャンプ先 1 / 2"
+        }
+      ]
+    },
+    {
+      "id": "17",
+      "slug": "previous-jump-candidate",
+      "title": "前のジャンプ候補へ移動",
+      "category": "HTMLとCSSの移動",
+      "commands": [
+        "codingTools.cyclePreviousJump"
+      ],
+      "description": "ジャンプ候補をShift + Tabで逆順に見られます。",
+      "note": "",
+      "key": "Shift + Tab",
+      "mac": "Shift + Tab",
+      "steps": [
+        {
+          "action": "ジャンプ先 2 / 2 を表示中",
+          "lines": [
+            "@media (min-width: 768px) {",
+            "  .card__title {",
+            "    font-size: 32px;",
+            "  }",
+            "}"
+          ],
+          "tab": "style.css",
+          "marks": [
+            {
+              "row": 1,
+              "start": 2,
+              "length": 12
+            }
+          ],
+          "toast": "ジャンプ先 2 / 2"
+        },
+        {
+          "action": "Shift + Tab を押す",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "marks": [
+            {
+              "row": 4,
+              "start": 0,
+              "length": 12
+            }
+          ],
+          "toast": "ジャンプ先 1 / 2"
+        },
+        {
+          "action": "前の候補へ戻った",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "marks": [
+            {
+              "row": 4,
+              "start": 0,
+              "length": 12
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "18",
+      "slug": "finish-jump",
+      "title": "ジャンプ候補の切り替えを終える",
+      "category": "HTMLとCSSの移動",
+      "commands": [
+        "codingTools.endJumpCycle"
+      ],
+      "description": "Escで切り替えを終了し、今の場所から編集を続けられます。",
+      "note": "",
+      "key": "Esc",
+      "mac": "Esc",
+      "steps": [
+        {
+          "action": "ジャンプ候補の切り替え中",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "marks": [
+            {
+              "row": 4,
+              "start": 0,
+              "length": 12
+            }
+          ],
+          "toast": "ジャンプ先 1 / 2　Tab：次　Esc：終了"
+        },
+        {
+          "action": "Esc を押す",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "marks": [
+            {
+              "row": 4,
+              "start": 0,
+              "length": 12
+            }
+          ]
+        },
+        {
+          "action": "候補の表示が消え、通常の編集へ",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "info": [
+            "Tabは通常のキー動作へ戻ります",
+            "表示中のファイルやコードはそのまま"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "19",
+      "slug": "safe-css-add",
+      "title": "CSSに空のルールを追加する",
+      "category": "CSSへの追加",
+      "commands": [
+        "codingTools.placeCss"
+      ],
+      "description": "コピーしたクラスの追加先を調べ、差分を確認してから空のCSSルールを追加します。",
+      "note": "最終確認ONの場合の流れです。既存のCSSルールは移動・書き換えしません。",
+      "key": "Ctrl + Alt + P",
+      "mac": "Cmd + Alt + P",
+      "steps": [
+        {
+          "action": "先に拡張機能で card__text をコピー",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "marks": [
+            {
+              "row": 2,
+              "start": 12,
+              "length": 10
+            }
+          ],
+          "info": [
+            "クリップボード：card__text"
+          ]
+        },
+        {
+          "action": "Ctrl + Alt + P でCSS追加を実行",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "toast": "追加位置とCSS構文を確認"
+        },
+        {
+          "action": "変更前と変更後を確認する",
+          "lines": [],
+          "mode": "diff",
+          "before": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "after": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "CSSの変更前 ⇄ 変更後",
+          "info": [
+            "この時点では、元のCSSは未変更"
+          ]
+        },
+        {
+          "action": "「差分を確認して適用」を選ぶ",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "style.css",
+          "activeRow": 8,
+          "toast": "空の「.card__text」を安全追加しました"
+        }
+      ]
+    },
+    {
+      "id": "20",
+      "slug": "existing-css",
+      "title": "同名のCSSがあれば、その場所へ移動",
+      "category": "CSSへの追加",
+      "commands": [
+        "codingTools.placeCss"
+      ],
+      "description": "既存ルールへ移動する候補を選ぶと、CSSを書き換えずに目的の場所を開きます。",
+      "note": "",
+      "key": "Ctrl + Alt + P",
+      "mac": "Cmd + Alt + P",
+      "steps": [
+        {
+          "action": "card__title をコピー済みで Ctrl + Alt + P",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "info": [
+            "クリップボード：card__title"
+          ]
+        },
+        {
+          "action": "既存へ移動の候補を選ぶ",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "menuTitle": "CSSの追加先を確認",
+          "menu": [
+            "既存へ移動：基本ルール",
+            "基本ルールの末尾に追加",
+            "既存の条件内に追加 / 新しい @media を作成"
+          ],
+          "focus": 0,
+          "on": 0
+        },
+        {
+          "action": "Enter で既存の場所へ",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "activeRow": 4,
+          "toast": "既存の .card__title へ移動しました（変更なし）"
+        }
+      ]
+    },
+    {
+      "id": "21",
+      "slug": "choose-stylesheet",
+      "title": "追加先のCSSファイルを選ぶ",
+      "category": "CSSへの追加",
+      "commands": [
+        "codingTools.placeCss"
+      ],
+      "description": "CSSファイルが複数あり追加先を決められない場合は、自分でファイルを選びます。",
+      "note": "",
+      "key": "Ctrl + Alt + P",
+      "mac": "Cmd + Alt + P",
+      "steps": [
+        {
+          "action": "HTMLからCSS追加を実行",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "info": [
+            "コピー済み：card__text",
+            "CSSが複数あり、優先ファイルは未設定"
+          ]
+        },
+        {
+          "action": "使うCSSファイルを選ぶ",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "menuTitle": "CSSを書き込むファイルを選択",
+          "menu": [
+            "style.css      css/style.css",
+            "components.css      css/components.css"
+          ],
+          "focus": 1
+        },
+        {
+          "action": "選んだCSSで追加先の確認へ進む",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}"
+          ],
+          "tab": "components.css",
+          "toast": "このあと差分プレビューで追加内容を確認"
+        }
+      ]
+    },
+    {
+      "id": "22",
+      "slug": "add-inside-media",
+      "title": "既存の条件内へ追加する",
+      "category": "CSSへの追加",
+      "commands": [
+        "codingTools.placeCss"
+      ],
+      "description": "既存の@mediaなどを選び、その条件の中へ空のルールを追加できます。",
+      "note": "",
+      "key": "Ctrl + Alt + P",
+      "mac": "Cmd + Alt + P",
+      "steps": [
+        {
+          "action": "追加先の候補画面を開く",
+          "lines": [
+            ".card { display: grid; }",
+            "",
+            "@media (min-width: 768px) {",
+            "  .card { gap: 24px; }",
+            "}"
+          ],
+          "tab": "style.css",
+          "menuTitle": "CSSの追加先を確認",
+          "menu": [
+            "基本ルールの末尾に追加",
+            "既存の条件内に追加 / 新しい @media を作成"
+          ],
+          "focus": 1,
+          "on": 1
+        },
+        {
+          "action": "条件を選んで Enter",
+          "lines": [
+            ".card { display: grid; }",
+            "",
+            "@media (min-width: 768px) {",
+            "  .card { gap: 24px; }",
+            "}"
+          ],
+          "tab": "style.css",
+          "menuTitle": "条件付きCSSの追加先",
+          "menu": [
+            "@media (min-width: 768px)",
+            "新規 @media を作成"
+          ],
+          "focus": 0,
+          "on": 0
+        },
+        {
+          "action": "選んだ条件内に追加される差分を見る",
+          "lines": [],
+          "mode": "diff",
+          "before": [
+            ".card { display: grid; }",
+            "",
+            "@media (min-width: 768px) {",
+            "  .card { gap: 24px; }",
+            "}"
+          ],
+          "after": [
+            ".card { display: grid; }",
+            "",
+            "@media (min-width: 768px) {",
+            "  .card { gap: 24px; }",
+            "",
+            "  .card__text {",
+            "  }",
+            "}"
+          ],
+          "tab": "CSSの変更前 ⇄ 変更後"
+        },
+        {
+          "action": "最終確認で適用する",
+          "lines": [
+            ".card { display: grid; }",
+            "",
+            "@media (min-width: 768px) {",
+            "  .card { gap: 24px; }",
+            "",
+            "  .card__text {",
+            "  }",
+            "}"
+          ],
+          "tab": "style.css",
+          "activeRow": 5
+        }
+      ]
+    },
+    {
+      "id": "23",
+      "slug": "new-media",
+      "title": "新しい@mediaを作って追加する",
+      "category": "CSSへの追加",
+      "commands": [
+        "codingTools.placeCss"
+      ],
+      "description": "条件付きCSSの候補から、新しい@mediaを入力して追加できます。",
+      "note": "",
+      "key": "Ctrl + Alt + P",
+      "mac": "Cmd + Alt + P",
+      "steps": [
+        {
+          "action": "条件付きCSSの追加先を開く",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "menuTitle": "条件付きCSSの追加先",
+          "menu": [
+            "新規 @media を作成"
+          ],
+          "focus": 0,
+          "on": 0
+        },
+        {
+          "action": "作る条件を入力して Enter",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "menuTitle": "作成するメディアクエリ（@media ...）",
+          "menu": [
+            "@media (min-width: 768px)"
+          ],
+          "focus": 0
+        },
+        {
+          "action": "新しい条件と空ルールを差分で確認",
+          "lines": [],
+          "mode": "diff",
+          "before": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "after": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            "@media (min-width: 768px) {",
+            "  .card__text {",
+            "  }",
+            "}"
+          ],
+          "tab": "CSSの変更前 ⇄ 変更後"
+        },
+        {
+          "action": "適用すると、条件付きルールが増える",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            "@media (min-width: 768px) {",
+            "  .card__text {",
+            "  }",
+            "}"
+          ],
+          "tab": "style.css",
+          "activeRow": 8
+        }
+      ]
+    },
+    {
+      "id": "24",
+      "slug": "custom-selector",
+      "title": "関係や状態を指定して追加する",
+      "category": "CSSへの追加",
+      "commands": [
+        "codingTools.placeCss"
+      ],
+      "description": "追加先の候補から、隣接・状態などを表すセレクタを入力できます。",
+      "note": "",
+      "key": "Ctrl + Alt + P",
+      "mac": "Cmd + Alt + P",
+      "steps": [
+        {
+          "action": ".card の追加先候補を表示",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "menuTitle": "CSSの追加先を確認",
+          "menu": [
+            "既存へ移動：基本ルール",
+            "関係・位置・状態のセレクタを指定",
+            "通常の貼り付け（カーソル位置）"
+          ],
+          "focus": 1,
+          "on": 1
+        },
+        {
+          "action": "追加するセレクタを入力",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "menuTitle": "追加するセレクタ",
+          "menu": [
+            ".card + .card"
+          ],
+          "focus": 0
+        },
+        {
+          "action": "候補選択後、差分を確認する",
+          "lines": [],
+          "mode": "diff",
+          "before": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "after": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card + .card {",
+            "}"
+          ],
+          "tab": "CSSの変更前 ⇄ 変更後"
+        },
+        {
+          "action": "適用後は指定した空ルールが増える",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card + .card {",
+            "}"
+          ],
+          "tab": "style.css",
+          "activeRow": 8
+        }
+      ]
+    },
+    {
+      "id": "25",
+      "slug": "paste-options-plain",
+      "title": "貼り付け方法から通常貼り付けを選ぶ",
+      "category": "CSSへの追加",
+      "commands": [
+        "codingTools.pasteOptions"
+      ],
+      "description": "貼り付け方法の画面で「通常の貼り付け」を選ぶと、今の位置へ文字を入れます。",
+      "note": "",
+      "key": "Ctrl + Alt + V",
+      "mac": "Cmd + Alt + V",
+      "steps": [
+        {
+          "action": "セレクタ文字列 .card をコピー済み",
+          "lines": [
+            ""
+          ],
+          "tab": "notes.txt",
+          "info": [
+            "クリップボード：.card"
+          ]
+        },
+        {
+          "action": "Ctrl + Alt + V を押す",
+          "lines": [
+            ""
+          ],
+          "tab": "notes.txt",
+          "menuTitle": "貼り付け方法",
+          "menu": [
+            "通常の貼り付け",
+            "CSSへ整理して追加 / 既存へ移動"
+          ],
+          "focus": 0,
+          "on": 0
+        },
+        {
+          "action": "Enter。最終確認ONなら、もう一度確定",
+          "lines": [
+            ""
+          ],
+          "tab": "notes.txt",
+          "menuTitle": "この操作を実行しますか？：通常の貼り付け",
+          "menu": [
+            "実行する",
+            "キャンセル"
+          ],
+          "focus": 0,
+          "on": 0
+        },
+        {
+          "action": "現在のカーソル位置に貼り付けられる",
+          "lines": [
+            ".card"
+          ],
+          "tab": "notes.txt",
+          "marks": [
+            {
+              "row": 0,
+              "start": 0,
+              "length": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "26",
+      "slug": "paste-options-css",
+      "title": "貼り付け方法からCSS追加を選ぶ",
+      "category": "CSSへの追加",
+      "commands": [
+        "codingTools.pasteOptions"
+      ],
+      "description": "CSSへ整理する方を選ぶと、CSS追加先の判断と差分確認へ進みます。",
+      "note": "",
+      "key": "Ctrl + Alt + V",
+      "mac": "Cmd + Alt + V",
+      "steps": [
+        {
+          "action": "card__text を拡張機能でコピー済み",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "info": [
+            "クリップボード：card__text"
+          ]
+        },
+        {
+          "action": "Ctrl + Alt + V でCSS追加を選ぶ",
+          "lines": [
+            "<div class=\"card is-active\">",
+            "  <h3 class=\"card__title\">Title</h3>",
+            "  <p class=\"card__text\">Text</p>",
+            "</div>"
+          ],
+          "menuTitle": "貼り付け方法",
+          "menu": [
+            "通常の貼り付け",
+            "CSSへ整理して追加 / 既存へ移動"
+          ],
+          "focus": 1,
+          "on": 1
+        },
+        {
+          "action": "CSSファイルと追加先を選び、差分を確認",
+          "lines": [],
+          "mode": "diff",
+          "before": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "after": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "CSSの変更前 ⇄ 変更後"
+        },
+        {
+          "action": "最終確認で適用する",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "style.css",
+          "activeRow": 8
+        }
+      ]
+    },
+    {
+      "id": "27",
+      "slug": "confirm-css",
+      "title": "差分を確認してから適用する",
+      "category": "CSSへの追加",
+      "commands": [
+        "codingTools.placeCss"
+      ],
+      "description": "最終確認ONのときは、差分を見て適用ボタンを押すまで元のCSSは変わりません。",
+      "note": "",
+      "key": "Ctrl + Alt + P",
+      "mac": "Cmd + Alt + P",
+      "steps": [
+        {
+          "action": "追加される行を左右で見比べる",
+          "lines": [],
+          "mode": "diff",
+          "before": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "after": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "CSSの変更前 ⇄ 変更後"
+        },
+        {
+          "action": "「差分を確認して適用」を選ぶ",
+          "lines": [],
+          "mode": "diff",
+          "before": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "after": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "CSSの変更前 ⇄ 変更後",
+          "menuTitle": "CSSの変更前後を確認してください：.card__text",
+          "menu": [
+            "差分を確認して適用",
+            "キャンセル"
+          ],
+          "focus": 0
+        },
+        {
+          "action": "適用後、編集用のCSSが開く",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "style.css",
+          "activeRow": 8
+        }
+      ]
+    },
+    {
+      "id": "28",
+      "slug": "cancel-css",
+      "title": "CSS追加をキャンセルする",
+      "category": "CSSへの追加",
+      "commands": [
+        "codingTools.placeCss"
+      ],
+      "description": "差分確認でキャンセルすると、元のCSSを変更せずに終わります。",
+      "note": "",
+      "key": "Ctrl + Alt + P",
+      "mac": "Cmd + Alt + P",
+      "steps": [
+        {
+          "action": "差分プレビューを表示",
+          "lines": [],
+          "mode": "diff",
+          "before": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "after": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "CSSの変更前 ⇄ 変更後"
+        },
+        {
+          "action": "キャンセルを選ぶ",
+          "lines": [],
+          "mode": "diff",
+          "before": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "after": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "CSSの変更前 ⇄ 変更後",
+          "menuTitle": "CSSの変更前後を確認してください：.card__text",
+          "menu": [
+            "差分を確認して適用",
+            "キャンセル"
+          ],
+          "focus": 1
+        },
+        {
+          "action": "元のCSSには追加されていない",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "info": [
+            ".card__text は未追加",
+            "プレビューのタブが残っても、元のCSSは未変更"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "29",
+      "slug": "stop-unsafe-css",
+      "title": "CSSを解析できなければ中止する",
+      "category": "CSSへの追加",
+      "commands": [
+        "codingTools.placeCss"
+      ],
+      "description": "構文が壊れているなど、安全に追加できない場合は編集を中止します。",
+      "note": "",
+      "key": "Ctrl + Alt + P",
+      "mac": "Cmd + Alt + P",
+      "steps": [
+        {
+          "action": "閉じかっこが足りないCSS",
+          "lines": [
+            ".card {",
+            "  display: grid;"
+          ],
+          "tab": "style.css",
+          "activeRow": 0
+        },
+        {
+          "action": "Ctrl + Alt + P を実行",
+          "lines": [
+            ".card {",
+            "  display: grid;"
+          ],
+          "tab": "style.css",
+          "toast": "自動配置を中止しました：CSSの構文を確認してください",
+          "warning": true
+        },
+        {
+          "action": "自動では変更されない",
+          "lines": [
+            ".card {",
+            "  display: grid;"
+          ],
+          "tab": "style.css",
+          "info": [
+            "先にCSSの構文を直してください",
+            "SCSS / LESSの自動配置も対象外です"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "30",
+      "slug": "undo-css",
+      "title": "追加したCSSを元に戻す",
+      "category": "CSSへの追加",
+      "commands": [],
+      "description": "追加直後にVS Code標準のCtrl + Zで、その編集を取り消せます。",
+      "note": "直前の編集を戻す操作です。間に別の編集をした場合は、その編集から戻ります。",
+      "key": "Ctrl  +  Z（VS Code標準）",
+      "mac": "Cmd  +  Z（VS Code標準）",
+      "steps": [
+        {
+          "action": "空の .card__text を追加した直後",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "style.css",
+          "activeRow": 8
+        },
+        {
+          "action": "Ctrl + Z を押す",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css"
+        },
+        {
+          "action": "追加前の内容に戻る",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "info": [
+            "VS Code標準の「元に戻す」",
+            "実機でのUndo確認は未完了です"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "31",
+      "slug": "history-panel",
+      "title": "履歴パネルを開く",
+      "category": "履歴",
+      "commands": [
+        "codingTools.showHistoryPanel"
+      ],
+      "description": "エクスプローラー内の「Coding Tools 履歴」を開きます。",
+      "note": "",
+      "key": "Ctrl + Alt + H",
+      "mac": "Cmd + Alt + H",
+      "steps": [
+        {
+          "action": "エディタで作業している状態",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css"
+        },
+        {
+          "action": "Ctrl + Alt + H を押す",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "sidebar": [
+            "CODING-TOOLS-DEMO",
+            "  index.html",
+            "  style.css",
+            "",
+            "Coding Tools 履歴（月別Diff）",
+            "  > 01 操作履歴（30日）",
+            "  > 02 保存履歴（90日）",
+            "  > 03 Git履歴（90日）"
+          ],
+          "sideFocus": 4
+        },
+        {
+          "action": "履歴の種類と月を展開する",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "style.css",
+          "sidebar": [
+            "CODING-TOOLS-DEMO",
+            "  index.html",
+            "  style.css",
+            "",
+            "Coding Tools 履歴（月別Diff）",
+            "  v 01 操作履歴（30日）",
+            "    v 2026-10",
+            "      10:20:00  style.css",
+            "  > 02 保存履歴（90日）",
+            "  > 03 Git履歴（90日）"
+          ],
+          "sideFocus": 7
+        }
+      ]
+    },
+    {
+      "id": "32",
+      "slug": "history-list",
+      "title": "履歴を一覧から選ぶ",
+      "category": "履歴",
+      "commands": [
+        "codingTools.openHistory"
+      ],
+      "description": "日時とファイル名の一覧から、見たい差分を選べます。",
+      "note": "",
+      "key": "コマンドパレットから実行",
+      "mac": "コマンドパレットから実行",
+      "steps": [
+        {
+          "action": "「差分履歴の一覧を開く」を実行",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "style.css"
+        },
+        {
+          "action": "見たい履歴を選択",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "style.css",
+          "menuTitle": "月別に保存された履歴を日時で選択",
+          "menu": [
+            "2026/10/26 10:20:00  style.css",
+            "2026/10/26 10:15:00  index.html"
+          ],
+          "focus": 0
+        },
+        {
+          "action": "Enterで差分ファイルが開く",
+          "lines": [
+            "--- style.css (before)",
+            "+++ style.css (after)",
+            "@@ -5,3 +5,6 @@",
+            " .card__title {",
+            "   font-size: 24px;",
+            " }",
+            "+",
+            "+.card__text {",
+            "+}"
+          ],
+          "tab": "style.css.diff",
+          "mode": "patch",
+          "activeRow": 7
+        }
+      ]
+    },
+    {
+      "id": "33",
+      "slug": "latest-diff",
+      "title": "最新の差分を開く",
+      "category": "履歴",
+      "commands": [
+        "codingTools.openLatestDiff"
+      ],
+      "description": "一番新しく記録された差分を、一覧選択なしで開きます。",
+      "note": "",
+      "key": "コマンドパレットから実行",
+      "mac": "コマンドパレットから実行",
+      "steps": [
+        {
+          "action": "「最新の差分を開く」を実行",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "style.css",
+          "sidebar": [
+            "CODING-TOOLS-DEMO",
+            "  index.html",
+            "  style.css",
+            "",
+            "Coding Tools 履歴（月別Diff）",
+            "  v 01 操作履歴（30日）",
+            "    v 2026-10",
+            "      10:20:00  style.css",
+            "  > 02 保存履歴（90日）",
+            "  > 03 Git履歴（90日）"
+          ]
+        },
+        {
+          "action": "最新の差分ファイルが開く",
+          "lines": [
+            "--- style.css (before)",
+            "+++ style.css (after)",
+            "@@ -5,3 +5,6 @@",
+            " .card__title {",
+            "   font-size: 24px;",
+            " }",
+            "+",
+            "+.card__text {",
+            "+}"
+          ],
+          "tab": "style.css.diff",
+          "mode": "patch",
+          "activeRow": 7
+        },
+        {
+          "action": "追加行は +、削除行は - で確認する",
+          "lines": [
+            "--- style.css (before)",
+            "+++ style.css (after)",
+            "@@ -5,3 +5,6 @@",
+            " .card__title {",
+            "   font-size: 24px;",
+            " }",
+            "+",
+            "+.card__text {",
+            "+}"
+          ],
+          "tab": "style.css.diff",
+          "mode": "patch",
+          "info": [
+            "履歴が空なら「保存済みの差分履歴はありません」と表示"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "34",
+      "slug": "selected-diff",
+      "title": "履歴の行をクリックして差分を見る",
+      "category": "履歴",
+      "commands": [
+        "codingTools.openDiff"
+      ],
+      "description": "月の中にある履歴の行を選ぶと、その変更内容が開きます。",
+      "note": "",
+      "key": "履歴の行をクリック / Enter",
+      "mac": "履歴の行をクリック / Enter",
+      "steps": [
+        {
+          "action": "操作履歴と月を展開する",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "style.css",
+          "sidebar": [
+            "CODING-TOOLS-DEMO",
+            "  index.html",
+            "  style.css",
+            "",
+            "Coding Tools 履歴（月別Diff）",
+            "  v 01 操作履歴（30日）",
+            "    v 2026-10",
+            "      10:20:00  style.css",
+            "  > 02 保存履歴（90日）",
+            "  > 03 Git履歴（90日）"
+          ]
+        },
+        {
+          "action": "10:20:00 style.css をクリック",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "style.css",
+          "sidebar": [
+            "CODING-TOOLS-DEMO",
+            "  index.html",
+            "  style.css",
+            "",
+            "Coding Tools 履歴（月別Diff）",
+            "  v 01 操作履歴（30日）",
+            "    v 2026-10",
+            "      10:20:00  style.css",
+            "  > 02 保存履歴（90日）",
+            "  > 03 Git履歴（90日）"
+          ],
+          "sideFocus": 7
+        },
+        {
+          "action": "選んだ履歴の差分が開く",
+          "lines": [
+            "--- style.css (before)",
+            "+++ style.css (after)",
+            "@@ -5,3 +5,6 @@",
+            " .card__title {",
+            "   font-size: 24px;",
+            " }",
+            "+",
+            "+.card__text {",
+            "+}"
+          ],
+          "tab": "style.css.diff",
+          "mode": "patch",
+          "sidebar": [
+            "CODING-TOOLS-DEMO",
+            "  index.html",
+            "  style.css",
+            "",
+            "Coding Tools 履歴（月別Diff）",
+            "  v 01 操作履歴（30日）",
+            "    v 2026-10",
+            "      10:20:00  style.css",
+            "  > 02 保存履歴（90日）",
+            "  > 03 Git履歴（90日）"
+          ],
+          "sideFocus": 7
+        }
+      ]
+    },
+    {
+      "id": "35",
+      "slug": "source-from-history",
+      "title": "履歴から変更元ファイルを開く",
+      "category": "履歴",
+      "commands": [
+        "codingTools.openSource"
+      ],
+      "description": "履歴の行から、編集した元ファイルの場所へ戻れます。",
+      "note": "Git pushの履歴から実行した場合は、ソース管理画面を開きます。",
+      "key": "履歴の行を右クリック → 変更元ファイルへ移動",
+      "mac": "履歴の行を右クリック → 変更元ファイルへ移動",
+      "steps": [
+        {
+          "action": "履歴の行を右クリックする",
+          "lines": [
+            "--- style.css (before)",
+            "+++ style.css (after)",
+            "@@ -5,3 +5,6 @@",
+            " .card__title {",
+            "   font-size: 24px;",
+            " }",
+            "+",
+            "+.card__text {",
+            "+}"
+          ],
+          "tab": "style.css.diff",
+          "mode": "patch",
+          "sidebar": [
+            "CODING-TOOLS-DEMO",
+            "  index.html",
+            "  style.css",
+            "",
+            "Coding Tools 履歴（月別Diff）",
+            "  v 01 操作履歴（30日）",
+            "    v 2026-10",
+            "      10:20:00  style.css",
+            "  > 02 保存履歴（90日）",
+            "  > 03 Git履歴（90日）"
+          ],
+          "sideFocus": 7
+        },
+        {
+          "action": "「差分の変更元ファイルへ移動」を選ぶ",
+          "lines": [
+            "--- style.css (before)",
+            "+++ style.css (after)",
+            "@@ -5,3 +5,6 @@",
+            " .card__title {",
+            "   font-size: 24px;",
+            " }",
+            "+",
+            "+.card__text {",
+            "+}"
+          ],
+          "tab": "style.css.diff",
+          "mode": "patch",
+          "menuTitle": "履歴の操作",
+          "menu": [
+            "差分の変更元ファイルへ移動",
+            "選択した差分を開く"
+          ],
+          "focus": 0
+        },
+        {
+          "action": "元の style.css の変更箇所が開く",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "style.css",
+          "activeRow": 8
+        }
+      ]
+    },
+    {
+      "id": "36",
+      "slug": "refresh-history",
+      "title": "履歴の表示を更新する",
+      "category": "履歴",
+      "commands": [
+        "codingTools.refreshHistory"
+      ],
+      "description": "保存済みの履歴を読み直して、パネルの表示を更新します。",
+      "note": "",
+      "key": "コマンドパレットから実行",
+      "mac": "コマンドパレットから実行",
+      "steps": [
+        {
+          "action": "履歴パネルを表示中",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "style.css",
+          "sidebar": [
+            "CODING-TOOLS-DEMO",
+            "  index.html",
+            "  style.css",
+            "",
+            "Coding Tools 履歴（月別Diff）",
+            "  v 01 操作履歴（30日）",
+            "    v 2026-10",
+            "      10:20:00  style.css",
+            "  > 02 保存履歴（90日）",
+            "  > 03 Git履歴（90日）"
+          ]
+        },
+        {
+          "action": "パネル上の「差分履歴を更新」を実行",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "style.css",
+          "sidebar": [
+            "CODING-TOOLS-DEMO",
+            "  index.html",
+            "  style.css",
+            "",
+            "Coding Tools 履歴（月別Diff）",
+            "  v 01 操作履歴（30日）",
+            "    v 2026-10",
+            "      10:20:00  style.css",
+            "  > 02 保存履歴（90日）",
+            "  > 03 Git履歴（90日）"
+          ],
+          "toast": "保存済みの履歴を読み直す"
+        },
+        {
+          "action": "現在の保存内容で表示される",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "style.css",
+          "sidebar": [
+            "CODING-TOOLS-DEMO",
+            "  index.html",
+            "  style.css",
+            "",
+            "Coding Tools 履歴（月別Diff）",
+            "  v 01 操作履歴（30日）",
+            "    v 2026-10",
+            "      10:20:00  style.css",
+            "  > 02 保存履歴（90日）",
+            "  > 03 Git履歴（90日）"
+          ],
+          "info": [
+            "ファイルの編集や、Gitからの取得は行いません"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "37",
+      "slug": "history-folder",
+      "title": "履歴フォルダーを開く",
+      "category": "履歴",
+      "commands": [
+        "codingTools.revealHistoryFolder"
+      ],
+      "description": "保存された履歴のフォルダーを、OSのエクスプローラーで開きます。",
+      "note": "",
+      "key": "コマンドパレットから実行",
+      "mac": "コマンドパレットから実行",
+      "steps": [
+        {
+          "action": "「履歴フォルダーをOSで開く」を実行",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "style.css",
+          "sidebar": [
+            "CODING-TOOLS-DEMO",
+            "  index.html",
+            "  style.css",
+            "",
+            "Coding Tools 履歴（月別Diff）",
+            "  v 01 操作履歴（30日）",
+            "    v 2026-10",
+            "      10:20:00  style.css",
+            "  > 02 保存履歴（90日）",
+            "  > 03 Git履歴（90日）"
+          ]
+        },
+        {
+          "action": "履歴保存先のフォルダーが開く",
+          "lines": [
+            "操作履歴",
+            "保存履歴",
+            "Git push履歴"
+          ],
+          "mode": "folder",
+          "tab": "エクスプローラー｜履歴保存先",
+          "info": [
+            "フォルダー表示は模式図です",
+            "実際の名前・場所は拡張機能の保存先によります"
+          ]
+        },
+        {
+          "action": "保存されている差分ファイルを確認できる",
+          "lines": [
+            "2026-10",
+            "  style.css の差分",
+            "  index.html の差分"
+          ],
+          "mode": "folder",
+          "tab": "エクスプローラー｜履歴保存先"
+        }
+      ]
+    },
+    {
+      "id": "38",
+      "slug": "save-history",
+      "title": "ファイル保存時の差分を残す",
+      "category": "履歴",
+      "commands": [],
+      "description": "保存履歴がONなら、前回保存した内容からの変更を保存時に記録します。",
+      "note": "同じ内容を保存しただけの場合は記録しません。",
+      "key": "Ctrl  +  S（VS Code標準）",
+      "mac": "Cmd  +  S（VS Code標準）",
+      "steps": [
+        {
+          "action": "前回保存したCSS",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "sidebar": [
+            "CODING-TOOLS-DEMO",
+            "  index.html",
+            "  style.css",
+            "",
+            "Coding Tools 履歴（月別Diff）",
+            "  > 01 操作履歴（30日）",
+            "  > 02 保存履歴（90日）",
+            "  > 03 Git履歴（90日）"
+          ]
+        },
+        {
+          "action": "font-size を 24px から 28px に編集",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 28px;",
+            "}"
+          ],
+          "tab": "style.css ●",
+          "activeRow": 5
+        },
+        {
+          "action": "Ctrl + S でファイルを保存",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 28px;",
+            "}"
+          ],
+          "tab": "style.css",
+          "sidebar": [
+            "Coding Tools 履歴（月別Diff）",
+            "  > 01 操作履歴（30日）",
+            "  v 02 保存履歴（90日）",
+            "    v 2026-10",
+            "      10:25:00 style.css",
+            "  > 03 Git履歴（90日）"
+          ],
+          "sideFocus": 4
+        },
+        {
+          "action": "保存履歴で差分を確認できる",
+          "lines": [
+            "--- style.css (before)",
+            "+++ style.css (after)",
+            "-.card__title { font-size: 24px; }",
+            "+.card__title { font-size: 28px; }"
+          ],
+          "tab": "style.css.diff",
+          "mode": "patch"
+        }
+      ]
+    },
+    {
+      "id": "39",
+      "slug": "push-and-log",
+      "title": "Coding ToolsからGit pushして記録する",
+      "category": "履歴",
+      "commands": [
+        "codingTools.pushAndLog"
+      ],
+      "description": "専用コマンドでpushが成功した場合に、Git push履歴を記録します。",
+      "note": "通常のターミナルや、ほかの拡張機能から行ったpushは記録の対象外です。",
+      "key": "コマンドパレットから実行",
+      "mac": "コマンドパレットから実行",
+      "steps": [
+        {
+          "action": "実行前にブランチと送信先を準備",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "style.css",
+          "info": [
+            "このGIFは説明用。実際のpushは行いません",
+            "ローカルフォルダーで、upstream設定済みの例"
+          ]
+        },
+        {
+          "action": "「Git pushを実行して履歴を記録」を実行",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "style.css",
+          "menuTitle": "Git pushを実行しますか？ main",
+          "menu": [
+            "実行",
+            "キャンセル"
+          ],
+          "focus": 0
+        },
+        {
+          "action": "「実行」を選び、push成功を待つ",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "style.css",
+          "toast": "Coding Tools: Git push成功 (main)"
+        },
+        {
+          "action": "Git履歴ONなら記録される",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "style.css",
+          "sidebar": [
+            "Coding Tools 履歴（月別Diff）",
+            "  > 01 操作履歴（30日）",
+            "  > 02 保存履歴（90日）",
+            "  v 03 Git履歴（90日）",
+            "    v 2026-10",
+            "      10:30:00 coding-tools-demo"
+          ],
+          "sideFocus": 5
+        }
+      ]
+    },
+    {
+      "id": "40",
+      "slug": "open-settings",
+      "title": "Coding Toolsの設定を開く",
+      "category": "設定",
+      "commands": [
+        "codingTools.openSettings"
+      ],
+      "description": "エクスプローラー内の「Coding Tools 設定」を表示します。",
+      "note": "",
+      "key": "コマンドパレットから実行",
+      "mac": "コマンドパレットから実行",
+      "steps": [
+        {
+          "action": "「履歴・最終確認の設定を開く」を実行",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}",
+            "",
+            ".card__text {",
+            "}"
+          ],
+          "tab": "style.css"
+        },
+        {
+          "action": "エクスプローラーの設定欄へ移動",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 0
+        },
+        {
+          "action": "変更したい設定を選べる",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 1
+        }
+      ]
+    },
+    {
+      "id": "41",
+      "slug": "toggle-operation",
+      "title": "操作履歴の記録をON/OFF",
+      "category": "設定",
+      "commands": [
+        "codingTools.toggleSetting"
+      ],
+      "description": "設定欄の項目をクリックするか、選択してEnterを押すとON/OFFが切り替わります。",
+      "note": "OFFでも、すでに保存されている履歴はそのままです。",
+      "key": "設定欄の対象行をクリック / Enter",
+      "mac": "設定欄の対象行をクリック / Enter",
+      "steps": [
+        {
+          "action": "操作履歴の記録は現在ON",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 1
+        },
+        {
+          "action": "対象の行で Enter を押す",
+          "lines": [
+            "Coding Tools 設定",
+            "OFF  操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 1,
+          "toast": "操作履歴の記録 → OFF"
+        },
+        {
+          "action": "もう一度 Enter でONに戻す",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 1,
+          "toast": "操作履歴の記録 → ON"
+        }
+      ]
+    },
+    {
+      "id": "42",
+      "slug": "toggle-save",
+      "title": "保存履歴の記録をON/OFF",
+      "category": "設定",
+      "commands": [
+        "codingTools.toggleSetting"
+      ],
+      "description": "設定欄の項目をクリックするか、選択してEnterを押すとON/OFFが切り替わります。",
+      "note": "OFFでも、すでに保存されている履歴はそのままです。",
+      "key": "設定欄の対象行をクリック / Enter",
+      "mac": "設定欄の対象行をクリック / Enter",
+      "steps": [
+        {
+          "action": "保存履歴の記録は現在ON",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 2
+        },
+        {
+          "action": "対象の行で Enter を押す",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "OFF  ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 2,
+          "toast": "保存履歴の記録 → OFF"
+        },
+        {
+          "action": "もう一度 Enter でONに戻す",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 2,
+          "toast": "保存履歴の記録 → ON"
+        }
+      ]
+    },
+    {
+      "id": "43",
+      "slug": "toggle-push",
+      "title": "Git push履歴の記録をON/OFF",
+      "category": "設定",
+      "commands": [
+        "codingTools.toggleSetting"
+      ],
+      "description": "設定欄の項目をクリックするか、選択してEnterを押すとON/OFFが切り替わります。",
+      "note": "OFFでも、すでに保存されている履歴はそのままです。Git pushの実行自体もこの設定では止まりません。",
+      "key": "設定欄の対象行をクリック / Enter",
+      "mac": "設定欄の対象行をクリック / Enter",
+      "steps": [
+        {
+          "action": "Git push履歴の記録は現在ON",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 3
+        },
+        {
+          "action": "対象の行で Enter を押す",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "OFF  Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 3,
+          "toast": "Git push履歴の記録 → OFF"
+        },
+        {
+          "action": "もう一度 Enter でONに戻す",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 3,
+          "toast": "Git push履歴の記録 → ON"
+        }
+      ]
+    },
+    {
+      "id": "44",
+      "slug": "toggle-confirm",
+      "title": "CSS適用前の最終確認をON/OFF",
+      "category": "設定",
+      "commands": [
+        "codingTools.toggleSetting"
+      ],
+      "description": "設定欄の項目をクリックするか、選択してEnterを押すとON/OFFが切り替わります。",
+      "note": "OFFでも差分プレビューと配置候補の選択は残ります。最後の適用確認だけを省略します。",
+      "key": "設定欄の対象行をクリック / Enter",
+      "mac": "設定欄の対象行をクリック / Enter",
+      "steps": [
+        {
+          "action": "CSS適用前の最終確認は現在ON",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 4
+        },
+        {
+          "action": "対象の行で Enter を押す",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "OFF  CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 4,
+          "toast": "CSS適用前の最終確認 → OFF"
+        },
+        {
+          "action": "もう一度 Enter でONに戻す",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 4,
+          "toast": "CSS適用前の最終確認 → ON"
+        }
+      ]
+    },
+    {
+      "id": "45",
+      "slug": "retention-operation",
+      "title": "操作履歴の保存期間を変える",
+      "category": "設定",
+      "commands": [
+        "codingTools.chooseRetentionDays"
+      ],
+      "description": "操作履歴について、履歴を残す日数を1〜360日で設定できます。",
+      "note": "任意の日数を入力する場合も、1〜360の整数を指定します。古い履歴は整理時に削除されます。",
+      "key": "設定欄の対象行をクリック / Enter",
+      "mac": "設定欄の対象行をクリック / Enter",
+      "steps": [
+        {
+          "action": "操作履歴の保存期間の行を選ぶ",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 5
+        },
+        {
+          "action": "行を開いて日数を選ぶ",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "menuTitle": "操作履歴：保存期間を選択（最大360日）",
+          "menu": [
+            "30日",
+            "90日",
+            "180日",
+            "360日",
+            "1〜360日を数字で指定"
+          ],
+          "focus": 2
+        },
+        {
+          "action": "180日を選んで Enter",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          180日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 5,
+          "toast": "操作履歴の保存期間を180日に変更"
+        }
+      ]
+    },
+    {
+      "id": "46",
+      "slug": "retention-save",
+      "title": "保存履歴の保存期間を変える",
+      "category": "設定",
+      "commands": [
+        "codingTools.chooseRetentionDays"
+      ],
+      "description": "保存履歴について、履歴を残す日数を1〜360日で設定できます。",
+      "note": "任意の日数を入力する場合も、1〜360の整数を指定します。古い履歴は整理時に削除されます。",
+      "key": "設定欄の対象行をクリック / Enter",
+      "mac": "設定欄の対象行をクリック / Enter",
+      "steps": [
+        {
+          "action": "保存履歴の保存期間の行を選ぶ",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 6
+        },
+        {
+          "action": "行を開いて日数を選ぶ",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "menuTitle": "保存履歴：保存期間を選択（最大360日）",
+          "menu": [
+            "30日",
+            "90日",
+            "180日",
+            "360日",
+            "1〜360日を数字で指定"
+          ],
+          "focus": 2
+        },
+        {
+          "action": "180日を選んで Enter",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          180日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 6,
+          "toast": "保存履歴の保存期間を180日に変更"
+        }
+      ]
+    },
+    {
+      "id": "47",
+      "slug": "retention-push",
+      "title": "Git push履歴の保存期間を変える",
+      "category": "設定",
+      "commands": [
+        "codingTools.chooseRetentionDays"
+      ],
+      "description": "Git push履歴について、履歴を残す日数を1〜360日で設定できます。",
+      "note": "任意の日数を入力する場合も、1〜360の整数を指定します。古い履歴は整理時に削除されます。",
+      "key": "設定欄の対象行をクリック / Enter",
+      "mac": "設定欄の対象行をクリック / Enter",
+      "steps": [
+        {
+          "action": "Git push履歴の保存期間の行を選ぶ",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 7
+        },
+        {
+          "action": "行を開いて日数を選ぶ",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "menuTitle": "Git push履歴：保存期間を選択（最大360日）",
+          "menu": [
+            "30日",
+            "90日",
+            "180日",
+            "360日",
+            "1〜360日を数字で指定"
+          ],
+          "focus": 2
+        },
+        {
+          "action": "180日を選んで Enter",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      180日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 7,
+          "toast": "Git push履歴の保存期間を180日に変更"
+        }
+      ]
+    },
+    {
+      "id": "48",
+      "slug": "keyboard-shortcuts",
+      "title": "ショートカット一覧を開いて変える",
+      "category": "設定",
+      "commands": [
+        "codingTools.openKeyboardShortcuts"
+      ],
+      "description": "VS Code標準のショートカット一覧で、Coding Toolsのキーを変更できます。",
+      "note": "",
+      "key": "コマンドパレットから実行",
+      "mac": "コマンドパレットから実行",
+      "steps": [
+        {
+          "action": "設定欄のショートカット一覧を開く",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 8
+        },
+        {
+          "action": "検索欄に Coding Tools を入力",
+          "lines": [
+            "検索：Coding Tools",
+            "",
+            "次のクラスへ移動        Ctrl+Alt+J",
+            "前のクラスへ移動        Ctrl+Alt+K",
+            "保存枠1へコピー          Ctrl+Alt+Shift+1"
+          ],
+          "mode": "settings",
+          "tab": "キーボード ショートカット",
+          "activeRow": 2
+        },
+        {
+          "action": "変えたい行のキー変更を開く",
+          "lines": [
+            "次のクラスへ移動",
+            "",
+            "希望のキーを押して Enter",
+            "例：Ctrl + Alt + N"
+          ],
+          "mode": "settings",
+          "tab": "キーボード ショートカット",
+          "activeRow": 3
+        },
+        {
+          "action": "重複を確認してから使用する",
+          "lines": [
+            "次のクラスへ移動        Ctrl+Alt+N"
+          ],
+          "mode": "settings",
+          "tab": "キーボード ショートカット",
+          "info": [
+            "ここでは変更例を表示しています",
+            "実際のキー設定は変更していません"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "49",
+      "slug": "open-gif-guide",
+      "title": "このGIFガイドを開く",
+      "category": "設定",
+      "commands": [
+        "codingTools.openVisualGuide"
+      ],
+      "description": "Coding Toolsの設定欄から、1操作ずつのGIFガイドを開けます。",
+      "note": "",
+      "key": "コマンドパレットから実行",
+      "mac": "コマンドパレットから実行",
+      "steps": [
+        {
+          "action": "設定欄の使い方ガイドを選ぶ",
+          "lines": [
+            "Coding Tools 設定",
+            "ON   操作ごとのDiffを記録",
+            "ON   ファイル保存時のDiffを記録",
+            "ON   Coding Toolsで行ったGit pushを記録",
+            "ON   CSS適用前の最終確認",
+            "操作履歴の保存期間          30日",
+            "保存履歴の保存期間          90日",
+            "Git push履歴の保存期間      90日",
+            "キーボードショートカット一覧を開く",
+            "GIFで使い方を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools 設定",
+          "activeRow": 9
+        },
+        {
+          "action": "VS Code内にガイドが開く",
+          "lines": [
+            "Coding Tools｜1操作ずつ見るGIFガイド",
+            "",
+            "01 次のクラス名を選ぶ",
+            "02 前のクラス名を選ぶ",
+            "03 次のクラスも追加選択する"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools｜GIFガイド",
+          "activeRow": 2
+        },
+        {
+          "action": "見たい操作の見出しを開く",
+          "lines": [
+            "01 次のクラス名を選ぶ",
+            "",
+            "操作前 → キーを押す → 選択が移る",
+            "",
+            "1つのGIFで、1つの操作を確認"
+          ],
+          "mode": "settings",
+          "tab": "Coding Tools｜GIFガイド",
+          "activeRow": 2
+        }
+      ]
+    },
+    {
+      "id": "50",
+      "slug": "preferred-stylesheet",
+      "title": "優先するCSSファイルを指定する",
+      "category": "CSSの設定",
+      "commands": [],
+      "description": "VS Codeの設定で、HTMLから追加するときに使うCSSファイルを指定できます。",
+      "note": "このCSS配置設定はVS Codeのsettings.jsonで管理します。履歴のON/OFF設定とは保存先が異なります。",
+      "key": "VS Code 設定：codingTools.preferredStylesheet",
+      "mac": "VS Code 設定：codingTools.preferredStylesheet",
+      "steps": [
+        {
+          "action": "Coding Toolsの優先CSS設定を開く",
+          "lines": [
+            "設定検索：codingTools.preferredStylesheet",
+            "",
+            "Coding Tools: Preferred Stylesheet",
+            "（未指定）"
+          ],
+          "mode": "settings",
+          "tab": "VS Code 設定",
+          "activeRow": 2
+        },
+        {
+          "action": "ワークスペースの相対パスを入力",
+          "lines": [
+            "設定検索：codingTools.preferredStylesheet",
+            "",
+            "Coding Tools: Preferred Stylesheet",
+            "css/style.css"
+          ],
+          "mode": "settings",
+          "tab": "VS Code 設定",
+          "activeRow": 3
+        },
+        {
+          "action": "一致するCSSが1件なら、そのファイルを優先",
+          "lines": [
+            ".card {",
+            "  display: grid;",
+            "}",
+            "",
+            ".card__title {",
+            "  font-size: 24px;",
+            "}"
+          ],
+          "tab": "css/style.css",
+          "info": [
+            "HTMLからの追加先に使います",
+            "既存の対象ファイルが必要です"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "51",
+      "slug": "placement-rules",
+      "title": "クラスの接頭辞ごとに追加先を指定する",
+      "category": "CSSの設定",
+      "commands": [],
+      "description": "クラス名の接頭辞に応じて、基本ルールか既存の@mediaを優先できます。",
+      "note": "値をbaseにすると基本ルールを優先します。該当する条件が一意に見つからない場合は、通常の追加先判断へ進みます。",
+      "key": "VS Code 設定：codingTools.placementRules",
+      "mac": "VS Code 設定：codingTools.placementRules",
+      "steps": [
+        {
+          "action": "VS Codeのワークスペース設定を開く",
+          "lines": [
+            "{",
+            "  \"codingTools.placementRules\": {",
+            "    \"card__\": \"@media (min-width: 768px)\"",
+            "  }",
+            "}"
+          ],
+          "tab": "settings.json",
+          "activeRow": 2
+        },
+        {
+          "action": "card__text をコピーしてCSS追加を実行",
+          "lines": [
+            ".card { display: grid; }",
+            "",
+            "@media (min-width: 768px) {",
+            "  .card { gap: 24px; }",
+            "}"
+          ],
+          "tab": "style.css",
+          "info": [
+            "card__ で始まるクラスが対象",
+            "同じ条件の@mediaが1つ存在する例"
+          ]
+        },
+        {
+          "action": "指定された条件内の差分を確認する",
+          "lines": [],
+          "mode": "diff",
+          "before": [
+            ".card { display: grid; }",
+            "",
+            "@media (min-width: 768px) {",
+            "  .card { gap: 24px; }",
+            "}"
+          ],
+          "after": [
+            ".card { display: grid; }",
+            "",
+            "@media (min-width: 768px) {",
+            "  .card { gap: 24px; }",
+            "",
+            "  .card__text {",
+            "  }",
+            "}"
+          ],
+          "tab": "CSSの変更前 ⇄ 変更後"
+        },
+        {
+          "action": "適用後、条件内に空ルールが増える",
+          "lines": [
+            ".card { display: grid; }",
+            "",
+            "@media (min-width: 768px) {",
+            "  .card { gap: 24px; }",
+            "",
+            "  .card__text {",
+            "  }",
+            "}"
+          ],
+          "tab": "style.css",
+          "activeRow": 5
+        }
+      ]
+    }
+  ],
+  "readmeImageBaseUrl": "https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/"
+}

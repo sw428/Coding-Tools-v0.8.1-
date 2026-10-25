@@ -1,9 +1,39 @@
 # CURRENT — Coding Toolsの開発状況
 
-- **更新日**：2026-10-25
+- **更新日**：2026-10-26
 - **現行基準**：v0.8.2 β
 - **正本**：このリポジトリのソースコード。VSIXはビルド結果。
 - **状態**：自動テスト合格 / VS Code実機テスト未完了。
+
+## 拡張機能の「詳細」をGIF＋1行説明に変更（2026-10-26）
+
+- READMEに51本のGIFを直接埋め込み、各GIFの直下に1行説明を配置。拡張機能の「詳細」でそのまま読める。
+- 詳細画面から発行者ID一覧・ディレクトリ構成・開発手順・内部実装・配布管理の説明を削除し、利用者向けの紹介と操作説明に整理。
+- `tools/build-gif-guide.js --docs-only`でREADMEのGIF一覧も同期する。
+- 検証：51組のGIF・1行説明、全画像参照、README再生成の一致、既存GIFガイドテスト（51 GIF・33コマンド・153参照）、差分の空白検査を確認。
+- `dist/coding-tools-0.8.2-details-gifs.vsix`を作成し、VS Codeへ更新インストール成功。インストール先のREADMEと51 GIFがソースに一致。詳細タブの実表示は未確認。
+
+## 使い方ガイドをGIF版へ置き換え（2026-10-26）
+
+- [1操作ずつ見るGIFガイド](docs/visual-guide.html)と[詳しい使い方](docs/GIF_GUIDE.md)を用意。README・文書目次・Coding Tools設定欄から繰り返し開ける。
+- 全33コマンドとCSS追加先の分岐、個別設定を51本に分割。旧SVG中心のガイドをGIF＋短い説明＋手順へ置き換え。
+- ガイドのタブは再利用し、他のタブへ移動した間も表示状態を保持。
+- 検証：11テストファイル合格。51 GIFの全フレーム読込、51操作と33コマンドの対応、Webviewの153画像・リンク参照を確認。
+- GIFは操作説明用の仮想画面で、実機録画ではない。利用可能なブラウザ接続がないため、実ブラウザでのHTML表示とVS Code実機での再生は未確認。
+- 配布・適用：`dist/coding-tools-0.8.2-gif-guide.vsix`を作成し、`--install-extension --force`で更新成功。インストール先の51 GIF、ガイド・詳細説明・実装がソースと一致し、package.jsonもVS Codeが付加した`__metadata`以外は一致。VS Code上でのタブ再生は未確認。
+- 梱包時、正本に設定された`ロゴ-文字なし.png`が見つからなかったため、既存VSIX内の同じアイコンを再利用（元画像・設定は変更していない）。次回の通常ビルド前にアイコンの正本を確認する。
+- 再生成：Windowsで `node tools/build-gif-guide.js`。説明文だけの再生成は `node tools/build-gif-guide.js --docs-only`。
+
+## 発行者・ロゴ（2026-10-26）
+
+- **発行者・作者**：Elliot Veyne / **Publisher ID**：`elliotveyne`
+- **拡張機能名**：Coding Tools / **Extension ID（name）**：`coding-tools`
+- **完全な拡張機能ID**：`elliotveyne.coding-tools`
+- `ロゴ-文字なし.png`をREADMEと拡張機能アイコンに設定し、VSIXにも同梱する。下部の「Coding Tools」の文字を外し、マークを中央に配置した。元画像の`ロゴ.png`は保存。
+- MITライセンスの著作権表記を`Copyright (c) 2026 Elliot Veyne`に変更。
+- 検証：`npm.cmd test`全通過。`dist/coding-tools-0.8.2.vsix`を作成し、梱包内のID・発行者名・表示名・元PNGとの一致・アイコン参照・README・LICENSEを確認済み。
+- Marketplaceの発行者登録・ID取得状況は未確認。公開操作は行っていない。
+- 旧ID `local-coding-tools.coding-tools-four-slot` から変わるため、旧版を導入済みの場合は別の拡張機能として扱われる。旧版との同時有効化を避け、設定・履歴の引き継ぎは実機で確認する。
 
 ## 今回追加：CSS安全配置（v0.8.2 β）
 

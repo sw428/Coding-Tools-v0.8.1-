@@ -1,9 +1,13 @@
 {
-  "name": "coding-tools-four-slot",
-  "displayName": "Coding Tools v0.8.2 β - 安全CSS配置 / HTML⇄CSSジャンプ",
+  "name": "coding-tools",
+  "displayName": "Coding Tools",
   "description": "β版：変更前後Diffで確認する安全な空ルール追加、HTML/CSS直接ジャンプ、2枠コピペ、履歴",
   "version": "0.8.2",
-  "publisher": "local-coding-tools",
+  "publisher": "elliotveyne",
+  "author": {
+    "name": "Elliot Veyne"
+  },
+  "icon": "ロゴ-文字なし.png",
   "license": "MIT",
   "engines": {
     "vscode": "^1.85.0"
@@ -184,7 +188,7 @@
       },
       {
         "command": "codingTools.openVisualGuide",
-        "title": "アニメーション付き使い方ガイドを開く",
+        "title": "GIFで使い方ガイドを開く（1操作ずつ）",
         "category": "Coding Tools",
         "icon": "$(book)"
       },
@@ -398,7 +402,7 @@
     ]
   },
   "scripts": {
-    "test": "node test/run-tests.js && node test/placement-tests.js && node test/confirmation-tests.js && node test/history-tests.js && node test/v06-tests.js && node test/v07-tests.js && node test/native-shortcuts-tests.js && node test/cross-navigation-tests.js && node test/jump-cycle-tests.js && node test/safe-placement-tests.js"
+    "test": "node test/run-tests.js && node test/placement-tests.js && node test/confirmation-tests.js && node test/history-tests.js && node test/v06-tests.js && node test/v07-tests.js && node test/native-shortcuts-tests.js && node test/cross-navigation-tests.js && node test/jump-cycle-tests.js && node test/safe-placement-tests.js && node test/gif-guide-tests.js"
   },
   "activationEvents": [
     "onView:codingTools.history",

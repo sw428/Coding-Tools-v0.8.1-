@@ -18,6 +18,7 @@ let historyUI = null;
 let activeContext = null;
 let jumpSession = null;
 let jumpStatusItem = null;
+let visualGuidePanel = null;
 
 function clearJumpSession() {
   jumpSession = null;
@@ -665,15 +666,19 @@ function activate(context) {
     vscode.commands.registerCommand('codingTools.placeCss', () => routeCss(context,{forceRoute:true})),
     vscode.commands.registerCommand('codingTools.pasteOptions', () => routeCss(context,{showMenu:true})),
     vscode.commands.registerCommand('codingTools.openVisualGuide', async()=>{
+      if(visualGuidePanel){visualGuidePanel.reveal(vscode.ViewColumn.One);return;}
       const fs=require('node:fs/promises');
       const root=path.join(context.extensionPath,'docs');
       const panel=vscode.window.createWebviewPanel('codingToolsVisualGuide','Coding Tools｜動く使い方ガイド',vscode.ViewColumn.One,{
         enableScripts:false,
+        retainContextWhenHidden:true,
         localResourceRoots:[vscode.Uri.file(root)]
       });
+      visualGuidePanel=panel;
+      panel.onDidDispose(()=>{visualGuidePanel=null;});
       try {
         const html=await fs.readFile(path.join(root,'visual-guide.html'),'utf8');
-        const mapped=html.replace(/(src|href)="([0-9]{2}-[^"]+\.svg)"/g,(_full,attr,file)=>
+        const mapped=html.replace(/\b(src|srcset|href)="(media\/gif\/[0-9]{2}-[a-z0-9-]+\.(?:gif|png))"/g,(_full,attr,file)=>
           `${attr}="${panel.webview.asWebviewUri(vscode.Uri.file(path.join(root,file)))}"`);
         panel.webview.html=mapped.replace('<head>',`<head><meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${panel.webview.cspSource} data:; style-src 'unsafe-inline';">`);
       } catch(error){

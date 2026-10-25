@@ -59,10 +59,10 @@ function registerSettingsUI(vscode,context,changedHandler=async()=>{}){
         tree.command={command:'codingTools.chooseRetentionDays',title:'保存期間を選択',arguments:[item.stage]};
         return tree;
       }
-      const tree=new vscode.TreeItem(item.kind==='guide'?'アニメーション図で使い方を確認':'キーボードショートカット一覧を開く',vscode.TreeItemCollapsibleState.None);
+      const tree=new vscode.TreeItem(item.kind==='guide'?'GIFで使い方を確認':'キーボードショートカット一覧を開く',vscode.TreeItemCollapsibleState.None);
       tree.iconPath=new vscode.ThemeIcon(item.kind==='guide'?'book':'keyboard');
       tree.command={command:item.kind==='guide'?'codingTools.openVisualGuide':'codingTools.openKeyboardShortcuts',title:'開く'};
-      tree.tooltip=item.kind==='guide'?'ブラウザでSVG付きガイドを開く':'VS Codeの標準ショートカット画面でCoding Toolsを検索・変更する';
+      tree.tooltip=item.kind==='guide'?'VS Code内で1操作ずつのGIFガイドを開く':'VS Codeの標準ショートカット画面でCoding Toolsを検索・変更する';
       return tree;
     }
   };
