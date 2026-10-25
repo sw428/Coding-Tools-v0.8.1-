@@ -129,7 +129,7 @@ function makeEditor(text, language = 'css') {
         fallbackCommands.push(command);
         if(registered.has(command)) return registered.get(command)(...args);
         if (command === 'setContext') {contextKeys.set(args[0],args[1]);return;}
-        if (command === 'workbench.view.explorer' || command === 'codingTools.history.focus') return;
+        if (command === 'workbench.view.explorer' || command === 'codingTools.history.focus' || command === 'vscode.diff') return;
         const editor=vscodeMock.window.activeTextEditor;
         if (command === 'editor.action.clipboardCopyAction') {
           clipboard=editor.selection.isEmpty ? editor.document.lineAt(editor.selection.active.line).text+'\n' : editor.document.getText(editor.selection);
@@ -144,7 +144,7 @@ function makeEditor(text, language = 'css') {
     StatusBarAlignment:{Right:2},
     TreeItemCollapsibleState:{None:0,Collapsed:1},
     TreeItem: class {constructor(label,collapsibleState){this.label=label;this.collapsibleState=collapsibleState;}},
-    Uri:{file(p){return {fsPath:p,path:p,toString(){return 'file://'+p;}};}, parse(u){return {path:u.replace('file://',''), toString(){return u;}};}},
+    Uri:{from(o){const u=o.scheme+':'+o.path;return {scheme:o.scheme,path:o.path,toString(){return u;}};},file(p){return {fsPath:p,path:p,toString(){return 'file://'+p;}};}, parse(u){return {path:u.replace('file://',''), toString(){return u;}};}},
     languages:{async setTextDocumentLanguage(doc){return doc;}},
     window: {
       activeTextEditor: null,
@@ -156,7 +156,7 @@ function makeEditor(text, language = 'css') {
         queueMicrotask(() => { if(!panel.disposed)view.message({type:'confirm',index:0}); });
         return panel;
       },
-      showInformationMessage(message,options) { warnings.push(message); return options?.modal ? Promise.resolve('実行する') : undefined; },
+      showInformationMessage(message,options) { warnings.push(message); return options?.modal ? Promise.resolve('実行する') : message.startsWith('CSSの変更前後を確認してください') ? Promise.resolve('差分を確認して適用') : undefined; },
       showWarningMessage(message) { warnings.push(message); },
       setStatusBarMessage() {},
       createStatusBarItem(){return {show(){},hide(){},dispose(){}};},
@@ -168,6 +168,7 @@ function makeEditor(text, language = 'css') {
       async showTextDocument(document) {lastOpenedDocument=document;const editor=this.activeTextEditor;if(editor.document!==document) {this.activeTextEditor=makeEditor(document.getText(),document.languageId);this.activeTextEditor.document.uri=document.uri;}return this.activeTextEditor;}
     },
     workspace: {
+      registerTextDocumentContentProvider(){return {dispose(){}};},
       onDidChangeTextDocument(){return {dispose(){}};},
       async openTextDocument(uri){return makeDocument(fs.readFileSync(uri.fsPath || uri.path, 'utf8'),'diff');},
       getConfiguration() { return {get(name, fallback) {return fallback;}}; },

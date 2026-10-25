@@ -26,3 +26,7 @@ history-logs/
 # Python
 __pycache__/
 *.pyc
+
+# Bundled CSS parser runtime (licensed, kept in source and VSIX)
+!vendor/postcss/node_modules/
+!vendor/postcss/node_modules/**

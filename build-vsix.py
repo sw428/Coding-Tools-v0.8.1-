@@ -50,8 +50,11 @@ ET.fromstring(content_types)
 with ZipFile(dest, 'w', compression=ZIP_DEFLATED) as archive:
     archive.writestr('extension.vsixmanifest', manifest)
     archive.writestr('[Content_Types].xml', content_types)
-    for name in ['package.json', 'extension.js', 'selectors.js', 'cross-navigation.js', 'placement.js', 'confirmation.js', 'history.js', 'history-view.js', 'settings.js', 'save-history.js', 'git-push-history.js', 'README.md', 'LICENSE']:
+    for name in ['package.json', 'extension.js', 'selectors.js', 'cross-navigation.js', 'placement.js', 'safe-placement.js', 'safe-preview.js', 'confirmation.js', 'history.js', 'history-view.js', 'settings.js', 'save-history.js', 'git-push-history.js', 'README.md', 'LICENSE']:
         archive.write(root / name, f'extension/{name}')
+    for runtime in sorted((root / 'vendor' / 'postcss').rglob('*')):
+        if runtime.is_file():
+            archive.write(runtime, f'extension/{runtime.relative_to(root)}')
     for guide_file in sorted((root / 'docs').glob('*')):
         if guide_file.is_file():
             archive.write(guide_file, f'extension/docs/{guide_file.name}')

@@ -1,6 +1,6 @@
 # Coding Tools β — 開発リポジトリ
 
-> **現行の基準：v0.8.1 β（2026-10-25時点）**。自動テストは通過。Windows / MacのVS Code実機での操作確認は未完了。**正式版ではありません。**
+> **現行の基準：v0.8.2 β（2026-10-25時点）**。自動テストは通過。Windows / MacのVS Code実機での操作確認は未完了。**正式版ではありません。**
 
 Coding Toolsは、HTML/CSSの学習とコーディング作業を効率化し、将来的には現場の規約・作業手順をプロファイルで切り替えられることを目指すVS Code拡張機能です。自動化の判断根拠と問題点を確認できることを重視します。
 
@@ -23,6 +23,8 @@ Coding Toolsは、HTML/CSSの学習とコーディング作業を効率化し、
 coding-tools-repository/
 ├── README.md / CURRENT.md / CHANGELOG.md
 ├── package.json / extension.js / *.js    # 実装の正本（現行の平坦な構造を保持）
+├── safe-placement.js / safe-preview.js  # CSS安全挿入・Diffプレビュー
+├── vendor/postcss/                      # CSS構文検査ライブラリ同梱（MIT）
 ├── test/                                 # 自動テスト
 ├── docs/                                 # 構想・採用仕様・判断・検証
 │   ├── reference/                        # 元のv0.8.1説明書
@@ -40,7 +42,7 @@ coding-tools-repository/
 2. ターミナルで `npm test` を実行する。Node.jsが必要。
 3. 変更内容を `CURRENT.md` に記録し、テストしてGitコミットする。
 4. 配布用のVSIXは `python build-vsix.py` で生成可能（現在のスクリプトでは親フォルダーに出力）。必要なら `dist/` に移動する。
-5. `dist/coding-tools-0.8.1-beta.vsix` は開始時点のインストール用ファイル（現行ソースからの再ビルド結果とは区別する）。
+5. `dist/coding-tools-0.8.2-beta.vsix` が今回の安全配置版です。旧 `v0.8.1` は比較用として残します。
 
 ## ユーザー向けの現行動作
 
@@ -48,8 +50,11 @@ coding-tools-repository/
 - 複数候補のジャンプ後はエディタ内でTab / Shift+Tab、Escで巡回を終える。
 - 2つの番号付き保存枠でコピー・貼り付けする。
 - 専用コマンドによるCSS配置・スマート貼り付け、月別Diff履歴、保存とGit pushの記録を扱う。
+- **v0.8.2 β：CSS自動配置を安全側に制限。** 既存ルールを書き換えず、空のCSSルール1件だけを追加。編集前後をPostCSSで構文解析し、既存ルールの構造と順序の不変性を検査。差分プレビューと適用確認を行う。解析できない場合は中止。SCSS / LESSは非対応。
 - **通常の `Ctrl+C / Ctrl+V` と `⌘C / ⌘V` のキー割り当てを上書きしない。**
 - 各コマンドはVS Code標準のキーボードショートカット一覧で検索・変更できる。
+
+CSS安全版の仕様は [docs/SAFE_PLACEMENT.md](docs/SAFE_PLACEMENT.md) を参照。
 
 詳細な現行操作説明は [元のREADME](docs/reference/README-v0.8.1-original.md) を参照。
 
@@ -71,3 +76,9 @@ GitHubのPrivateリポジトリへの公開・pushは、このローカル一式
 ## 修正の手順
 
 構想記録 → 採用仕様の合意 → ソース修正 → 自動テスト → 実機検証 → CURRENT更新 → Gitコミット → 必要ならVSIX作成。**確認なしに採用済み仕様や履歴を上書きしない。**
+
+## 同梱するCSS構文解析ライブラリ
+
+PostCSS 8.5.6 とその依存ライブラリ（nanoid、picocolors、source-map-js）を`vendor/postcss/`に同梱しています。MITライセンス等の通知は各同梱パッケージ内のLICENSEを参照。利用者のPCでnpm installしなくてもVSIXが動作するようにするためです。
+
+**注意**：構文解析・差分確認は、ブラウザで表示が絶対に変化しないことの数学的証明ではありません。実機ブラウザ検証も継続します。

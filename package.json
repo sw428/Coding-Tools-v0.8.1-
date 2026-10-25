@@ -1,8 +1,8 @@
 {
   "name": "coding-tools-four-slot",
-  "displayName": "Coding Tools β - エディタ内HTML⇄CSSジャンプ / 2保存枠",
-  "description": "β版：選択したクラス名からエディタへ即時ジャンプ、Tabで候補巡回、2枠コピペ、CSS配置・月別Diff履歴",
-  "version": "0.8.1",
+  "displayName": "Coding Tools v0.8.2 β - 安全CSS配置 / HTML⇄CSSジャンプ",
+  "description": "β版：変更前後Diffで確認する安全な空ルール追加、HTML/CSS直接ジャンプ、2枠コピペ、履歴",
+  "version": "0.8.2",
   "publisher": "local-coding-tools",
   "license": "MIT",
   "engines": {
@@ -398,7 +398,7 @@
     ]
   },
   "scripts": {
-    "test": "node test/run-tests.js && node test/placement-tests.js && node test/confirmation-tests.js && node test/history-tests.js && node test/v06-tests.js && node test/v07-tests.js && node test/native-shortcuts-tests.js && node test/cross-navigation-tests.js && node test/jump-cycle-tests.js"
+    "test": "node test/run-tests.js && node test/placement-tests.js && node test/confirmation-tests.js && node test/history-tests.js && node test/v06-tests.js && node test/v07-tests.js && node test/native-shortcuts-tests.js && node test/cross-navigation-tests.js && node test/jump-cycle-tests.js && node test/safe-placement-tests.js"
   },
   "activationEvents": [
     "onView:codingTools.history",

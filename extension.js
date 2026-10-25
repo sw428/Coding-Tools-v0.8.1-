@@ -3,6 +3,8 @@
 const vscode = require('vscode');
 const { findCssClasses, nextClass, findHtmlClasses } = require('./selectors');
 const placement = require('./placement');
+const safety = require('./safe-placement');
+const safePreview = require('./safe-preview');
 const path = require('node:path');
 const { showConfirmation } = require('./confirmation');
 const history = require('./history');
@@ -367,16 +369,42 @@ async function jumpTo(editor, rule) {
 }
 
 async function insertAt(context, editor, selector, insertion) {
-  if (!insertion || !insertion.text || /[{};]/.test(selector)) return false;
+  // CSS safe mode: do not rewrite, move, or delete existing rules. No edit
+  // takes place until an independent parser validates before/after states.
+  const original=editor.document.getText();
+  const version=editor.document.version;
+  const check=safety.preflight(original,selector,insertion,editor.document.languageId);
+  if(!check.ok){
+    vscode.window.showWarningMessage(`Coding Tools: 自動配置を中止しました。${check.reason}`);
+    return false;
+  }
+  try {
+    await safePreview.show(vscode,original,check.after,selector);
+  } catch(error) {
+    vscode.window.showWarningMessage(`Coding Tools: Diffプレビューを開けないため中止しました: ${error.message}`);
+    return false;
+  }
+  if(settings.enabled(context,'confirm')){
+    const response=await vscode.window.showInformationMessage(
+      `CSSの変更前後を確認してください：${selector}`,
+      '差分を確認して適用', 'キャンセル');
+    if(response!=='差分を確認して適用')return false;
+  }
+  // Opening the preview may have taken time; abort instead of inserting at a
+  // stale position if any editor/extension changed the file in the meantime.
+  if(editor.document.version!==version || editor.document.getText()!==original){
+    vscode.window.showWarningMessage('Coding Tools: Diff確認中にCSSが変更されたため、自動配置を中止しました。');
+    return false;
+  }
   const change=new vscode.WorkspaceEdit();
-  change.insert(editor.document.uri, editor.document.positionAt(insertion.offset), insertion.text);
-  const ok=await loggedEdit(context, editor, `CSSへ追加：${selector}`, () => vscode.workspace.applyEdit(change));
+  change.insert(editor.document.uri,editor.document.positionAt(insertion.offset),insertion.text);
+  const ok=await loggedEdit(context,editor,`CSSへ安全追加：${selector}`,()=>vscode.workspace.applyEdit(change));
   if(ok){
-    const start=editor.document.positionAt(insertion.offset+insertion.text.indexOf(selector));
     const shown=await vscode.window.showTextDocument(editor.document,{preview:false});
+    const start=shown.document.positionAt(insertion.offset+insertion.text.indexOf(selector));
     shown.selection=new vscode.Selection(start,start);
     shown.revealRange(new vscode.Range(start,start),vscode.TextEditorRevealType.InCenterIfOutsideViewport);
-    notify(`「${selector}」をCSSへ新規追加しました`);
+    notify(`空の「${selector}」を安全追加しました（Ctrl+Zで取消可）`);
   } else vscode.window.showWarningMessage('Coding Tools: 編集できませんでした。読み取り専用や競合を確認してください。');
   return ok;
 }
@@ -448,11 +476,7 @@ async function routeCss(context,{showMenu=false,forceRoute=false,fallbackPlain=f
     placement.scopeKey(r)!==placement.scopeKey(plan.current) &&
     [...r.prelude.matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)].some(m=>m[1]===family || m[1].startsWith(family+'__') || m[1].startsWith(family+'--')));
   if(plan.preferred==='insert' && plan.allExact.length===0 && !sameFamilyElsewhere) {
-    return confirmExecution({
-      label:`推奨位置に ${selector} を新規追加`,
-      description:plan.reason || '既存ルールの前後関係から配置先を判定しました。',
-      run:()=>insertAt(context,editor,selector,placement.formatInsert(text,selector,plan.anchor)),
-    });
+    return insertAt(context,editor,selector,placement.formatInsert(text,selector,plan.anchor));
   }
   const items=[];
   // Existing matches always before newly-created variants.
@@ -488,7 +512,7 @@ async function routeCss(context,{showMenu=false,forceRoute=false,fallbackPlain=f
         }));
       const choice=await showConfirmation(vscode,{
         title:'条件付きCSSの追加先',subtitle:`${selector} の配置先を選択`,items:inner,defaultIndex:0});
-      if(choice)await confirmExecution(choice);
+      if(choice)await choice.run();
     }));
   // Extra selectors are genuinely useful; allow precise custom selectors, including +, ~, nth-child.
   if(/^\.[\w-]+$/.test(selector))items.push(option('$(symbol-method) 関係・位置・状態のセレクタを指定','例：'+selector+' + '+selector+'、'+selector+':nth-child(3)',async()=>{
@@ -499,7 +523,7 @@ async function routeCss(context,{showMenu=false,forceRoute=false,fallbackPlain=f
   }));
   items.push(option('$(paste) 通常の貼り付け（カーソル位置）','CSSの挿入位置を変更せず、従来の貼り付けを行う',()=>nativePaste(context,editor,'通常の貼り付け')));
   const pick=await showConfirmation(vscode,{title:'CSSの追加先を確認',subtitle:`${selector} の前後関係と条件から候補を表示`,items,defaultIndex:0});
-  if(pick) await confirmExecution(pick);
+  if(pick) await pick.run();
 }
 
 // Optional smart-paste command (unbound by default). Native Ctrl/Cmd+V is untouched.
@@ -589,6 +613,7 @@ async function crossJump(destination) {
 
 function activate(context) {
   activeContext=context;
+  safePreview.register(vscode,context);
   jumpStatusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right,80);
   jumpStatusItem.command='codingTools.cycleNextJump';
   context.subscriptions.push(jumpStatusItem,
