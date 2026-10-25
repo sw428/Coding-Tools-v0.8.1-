@@ -30,3 +30,6 @@ __pycache__/
 # Bundled CSS parser runtime (licensed, kept in source and VSIX)
 !vendor/postcss/node_modules/
 !vendor/postcss/node_modules/**
+
+# Private development conversation archive (never add to Git)
+docs/制作やり取り/非公開_詳細記録/
