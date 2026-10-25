@@ -1,0 +1,28 @@
+# Dependencies / caches
+node_modules/
+.npm/
+.cache/
+*.log
+.DS_Store
+Thumbs.db
+
+# Packaging / local user data
+/dist/*.vsix
+/dist/*.zip
+*.code-workspace
+Coding Tools History/
+coding-tools-history/
+history-logs/
+*.patch
+*.diff
+*.env
+.env.*
+!.env.example
+
+# Editor-specific user preferences
+.vscode/settings.json
+.vscode/keybindings.json
+
+# Python
+__pycache__/
+*.pyc

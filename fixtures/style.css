@@ -1,0 +1,7 @@
+/* テスト用のCSS。実プロジェクトへ貼り付けない。 */
+.course { padding: 20px; }
+.course__title { font-size: 20px; }
+.course__note { color: #555; }
+@media (min-width: 768px) {
+  .course__title { font-size: 28px; }
+}

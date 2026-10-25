@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="400" viewBox="0 0 1040 400" role="img" aria-labelledby="ttl dsc">
+<title id="ttl">01｜クラス移動・範囲追加</title><desc id="dsc">HTML/CSSともクラス名全体を選択。空のclassはスキップ。追加選択は別コマンド。</desc><style>
+svg { background:#F7F9FC; } text{font-family:"Yu Gothic","Noto Sans CJK JP",Meiryo,sans-serif;fill:#18253B}
+.t{font-size:26px;font-weight:700}.hint{font-size:15px;fill:#64748b}.boxTitle{font-size:18px;font-weight:700}.code{font-size:20px;font-family:ui-monospace,Consolas,monospace}.small{font-size:15px}.label{font-size:15px;font-weight:700}.num{font-size:15px;font-weight:700;fill:#ffffff}
+.flow{stroke:#4F79E9;stroke-width:3;fill:none;stroke-linecap:round;stroke-dasharray:7 8;animation:dash .95s linear infinite}
+.hi{fill:#DEEAFF;stroke:#3D69D5;stroke-width:2}.base{fill:#fff;stroke:#CDD8EA;stroke-width:1.5}
+.ph1{animation:p1 8s infinite}.ph2{animation:p2 8s infinite}.ph3{animation:p3 8s infinite}.ph4{animation:p4 8s infinite}
+.fade1{animation:f1 8s infinite}.fade2{animation:f2 8s infinite}.fade3{animation:f3 8s infinite}.fade4{animation:f4 8s infinite}
+.pulse{animation:pulse 2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes dash{to{stroke-dashoffset:-30}}
+@keyframes pulse{0%,100%{opacity:.75}50%{opacity:1}}
+@keyframes f1{0%,22%,100%{opacity:1}25%,97%{opacity:.16}}
+@keyframes f2{0%,24%,100%{opacity:.15}27%,48%{opacity:1}51%,98%{opacity:.15}}
+@keyframes f3{0%,49%,100%{opacity:.15}52%,73%{opacity:1}76%,98%{opacity:.15}}
+@keyframes f4{0%,74%,100%{opacity:.15}78%,96%{opacity:1}98%{opacity:.15}}
+@keyframes p1{0%,22%,100%{opacity:1}25%,97%{opacity:.2}}
+@keyframes p2{0%,24%,100%{opacity:.2}27%,48%{opacity:1}51%,98%{opacity:.2}}
+@keyframes p3{0%,49%,100%{opacity:.2}52%,73%{opacity:1}76%,98%{opacity:.2}}
+@keyframes p4{0%,74%,100%{opacity:.2}78%,96%{opacity:1}98%{opacity:.2}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+<rect width="1040" height="400" fill="#F7F9FC"/><rect x="18" y="18" width="1004" height="364" rx="22" fill="#ffffff" stroke="#DFE7F2"/>
+<text x="46" y="59" class="t">01｜クラス移動・範囲追加</text><text x="46" y="86" class="hint">HTML/CSSともクラス名全体を選択。空のclassはスキップ。追加選択は別コマンド。</text><rect x="48" y="112" width="944" height="182" rx="12" class="base" /><text x="72" y="144" class="label">index.html</text><g><text x="77" y="192" class="code">&lt;section class="</text>
+<rect class="hi ph1" x="277" y="167" width="65" height="33" rx="5"/><text x="285" y="192" class="code">card</text>
+<rect class="hi ph2" x="345" y="167" width="85" height="33" rx="5"/><text x="351" y="192" class="code">active</text>
+<text x="431" y="192" class="code">"&gt;</text>
+<text x="77" y="253" class="code">  &lt;p class="</text>
+<rect class="hi ph3" x="236" y="230" width="74" height="33" rx="5"/><text x="243" y="253" class="code">title</text>
+<rect class="hi ph4" x="315" y="230" width="81" height="33" rx="5"/><text x="322" y="253" class="code">large</text>
+<text x="401" y="253" class="code">"&gt;...&lt;/p&gt;</text></g><g class="fade1"><circle cx="80" cy="334" r="13" fill="#3D69D5"/><text x="76" y="339" class="num">1</text><text x="99" y="339" class="label">card</text></g><g class="fade2"><circle cx="283" cy="334" r="13" fill="#3D69D5"/><text x="279" y="339" class="num">2</text><text x="302" y="339" class="label">active</text></g><g class="fade3"><circle cx="514" cy="334" r="13" fill="#3D69D5"/><text x="510" y="339" class="num">3</text><text x="533" y="339" class="label">title</text></g><g class="fade4"><circle cx="735" cy="334" r="13" fill="#3D69D5"/><text x="731" y="339" class="num">4</text><text x="754" y="339" class="label">large</text></g></svg>

@@ -1,0 +1,414 @@
+{
+  "name": "coding-tools-four-slot",
+  "displayName": "Coding Tools β - エディタ内HTML⇄CSSジャンプ / 2保存枠",
+  "description": "β版：選択したクラス名からエディタへ即時ジャンプ、Tabで候補巡回、2枠コピペ、CSS配置・月別Diff履歴",
+  "version": "0.8.1",
+  "publisher": "local-coding-tools",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "copy",
+    "paste",
+    "clipboard",
+    "css",
+    "macro",
+    "snippet",
+    "コピペ",
+    "navigation",
+    "定義ジャンプ"
+  ],
+  "main": "./extension.js",
+  "extensionKind": [
+    "ui"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "codingTools.copy1",
+        "title": "コピー 1（保存枠1へ）",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.paste1",
+        "title": "貼り付け 1（保存枠1から）",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.copy2",
+        "title": "コピー 2（保存枠2へ）",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.paste2",
+        "title": "貼り付け 2（保存枠2から）",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.jumpToCss",
+        "title": "HTMLのクラスからCSS定義へジャンプ",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.jumpToHtml",
+        "title": "CSSのクラスからHTML使用箇所へジャンプ",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.chooseCopySlot",
+        "title": "コピー先を一覧から選択",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.choosePasteSlot",
+        "title": "貼り付け元を一覧から選択",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.nextClass",
+        "title": "次のクラスへ移動（HTML / CSS）",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.previousClass",
+        "title": "前のクラスへ移動（HTML / CSS）",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.extendNextClass",
+        "title": "次のクラスも追加選択",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.extendPreviousClass",
+        "title": "前のクラスも追加選択",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.pushAndLog",
+        "title": "Git pushを実行して履歴を記録",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.copyClassName",
+        "title": "カーソル上のクラス名をコピー",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.smartCopy",
+        "title": "スマートコピー（クラスならドットなし）",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.smartPaste",
+        "title": "CSSスマート貼り付け（クラスならドット付き）",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.placeCss",
+        "title": "CSSに適切な場所へ追加 / 既存へ移動",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.pasteOptions",
+        "title": "貼り付け先を選択（通常 / CSSへ整理）",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.showHistoryPanel",
+        "title": "履歴パネルを表示（エクスプローラー）",
+        "category": "Coding Tools",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "codingTools.openHistory",
+        "title": "差分履歴の一覧を開く",
+        "category": "Coding Tools",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "codingTools.openLatestDiff",
+        "title": "最新の差分を開く",
+        "category": "Coding Tools",
+        "icon": "$(history)"
+      },
+      {
+        "command": "codingTools.openDiff",
+        "title": "選択した差分を開く",
+        "category": "Coding Tools",
+        "icon": "$(diff)"
+      },
+      {
+        "command": "codingTools.openSource",
+        "title": "差分の変更元ファイルへ移動",
+        "category": "Coding Tools",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "codingTools.refreshHistory",
+        "title": "差分履歴を更新",
+        "category": "Coding Tools",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "codingTools.revealHistoryFolder",
+        "title": "履歴フォルダーをOSで開く",
+        "category": "Coding Tools",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "codingTools.openSettings",
+        "title": "履歴・最終確認の設定を開く（settings.jsonを変更しない）",
+        "category": "Coding Tools",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "codingTools.toggleSetting",
+        "title": "設定のON/OFFを切り替え",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.chooseRetentionDays",
+        "title": "履歴の保存期間を変更（1〜360日）",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.openKeyboardShortcuts",
+        "title": "ショートカット一覧を開く",
+        "category": "Coding Tools",
+        "icon": "$(keyboard)"
+      },
+      {
+        "command": "codingTools.openVisualGuide",
+        "title": "アニメーション付き使い方ガイドを開く",
+        "category": "Coding Tools",
+        "icon": "$(book)"
+      },
+      {
+        "command": "codingTools.cycleNextJump",
+        "title": "ジャンプ候補：次（Tab）",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.cyclePreviousJump",
+        "title": "ジャンプ候補：前（Shift+Tab）",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.endJumpCycle",
+        "title": "ジャンプ候補の切り替えを終了",
+        "category": "Coding Tools"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "codingTools.copy1",
+        "key": "ctrl+alt+shift+1",
+        "mac": "cmd+alt+shift+1",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "codingTools.paste1",
+        "key": "ctrl+alt+1",
+        "mac": "cmd+alt+1",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "codingTools.copy2",
+        "key": "ctrl+alt+shift+2",
+        "mac": "cmd+alt+shift+2",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "codingTools.paste2",
+        "key": "ctrl+alt+2",
+        "mac": "cmd+alt+2",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "codingTools.jumpToCss",
+        "key": "ctrl+alt+3",
+        "mac": "cmd+alt+3",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "codingTools.jumpToHtml",
+        "key": "ctrl+alt+4",
+        "mac": "cmd+alt+4",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "codingTools.nextClass",
+        "key": "ctrl+alt+j",
+        "mac": "cmd+alt+j",
+        "when": "editorTextFocus && (editorLangId == css || editorLangId == scss || editorLangId == less || editorLangId == html || editorLangId == vue || editorLangId == php || editorLangId == javascriptreact || editorLangId == typescriptreact)"
+      },
+      {
+        "command": "codingTools.previousClass",
+        "key": "ctrl+alt+k",
+        "mac": "cmd+alt+k",
+        "when": "editorTextFocus && (editorLangId == css || editorLangId == scss || editorLangId == less || editorLangId == html || editorLangId == vue || editorLangId == php || editorLangId == javascriptreact || editorLangId == typescriptreact)"
+      },
+      {
+        "command": "codingTools.copyClassName",
+        "key": "ctrl+alt+shift+c",
+        "mac": "cmd+alt+shift+c",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "codingTools.placeCss",
+        "key": "ctrl+alt+p",
+        "mac": "cmd+alt+p",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "codingTools.pasteOptions",
+        "key": "ctrl+alt+v",
+        "mac": "cmd+alt+v",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "codingTools.showHistoryPanel",
+        "key": "ctrl+alt+h",
+        "mac": "cmd+alt+h",
+        "when": "!inQuickOpen"
+      },
+      {
+        "command": "codingTools.extendNextClass",
+        "key": "ctrl+alt+shift+j",
+        "mac": "cmd+alt+shift+j",
+        "when": "editorTextFocus && (editorLangId == css || editorLangId == scss || editorLangId == less || editorLangId == html || editorLangId == vue || editorLangId == php || editorLangId == javascriptreact || editorLangId == typescriptreact)"
+      },
+      {
+        "command": "codingTools.extendPreviousClass",
+        "key": "ctrl+alt+shift+k",
+        "mac": "cmd+alt+shift+k",
+        "when": "editorTextFocus && (editorLangId == css || editorLangId == scss || editorLangId == less || editorLangId == html || editorLangId == vue || editorLangId == php || editorLangId == javascriptreact || editorLangId == typescriptreact)"
+      },
+      {
+        "command": "codingTools.cycleNextJump",
+        "key": "tab",
+        "when": "editorTextFocus && codingTools.jumpCycle"
+      },
+      {
+        "command": "codingTools.cyclePreviousJump",
+        "key": "shift+tab",
+        "when": "editorTextFocus && codingTools.jumpCycle"
+      },
+      {
+        "command": "codingTools.endJumpCycle",
+        "key": "escape",
+        "when": "editorTextFocus && codingTools.jumpCycle"
+      }
+    ],
+    "configuration": {
+      "title": "Coding Tools",
+      "properties": {
+        "codingTools.preferredStylesheet": {
+          "type": "string",
+          "default": "",
+          "scope": "resource",
+          "description": "HTMLからCSSへ追加する場合の優先CSSファイル。例: css/style.css（ワークスペースの相対パス）。空なら候補から選択。"
+        },
+        "codingTools.placementRules": {
+          "type": "object",
+          "default": {},
+          "scope": "resource",
+          "description": "接頭辞ごとの挿入先条件。例: {\"course__\":\"@media (min-width: 768px)\",\"c-\":\"base\"}。指定した既存の@mediaを優先し、存在しなければ選択画面を表示。",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "codingTools.history",
+          "name": "Coding Tools 履歴（月別Diff）",
+          "visibility": "visible"
+        },
+        {
+          "id": "codingTools.settingsView",
+          "name": "Coding Tools 設定",
+          "visibility": "visible"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "codingTools.openHistory",
+          "when": "view == codingTools.history",
+          "group": "navigation@0"
+        },
+        {
+          "command": "codingTools.openLatestDiff",
+          "when": "view == codingTools.history",
+          "group": "navigation@1"
+        },
+        {
+          "command": "codingTools.refreshHistory",
+          "when": "view == codingTools.history",
+          "group": "navigation@2"
+        },
+        {
+          "command": "codingTools.revealHistoryFolder",
+          "when": "view == codingTools.history",
+          "group": "navigation@3"
+        },
+        {
+          "command": "codingTools.openSettings",
+          "when": "view == codingTools.history",
+          "group": "navigation@4"
+        },
+        {
+          "command": "codingTools.openVisualGuide",
+          "when": "view == codingTools.settingsView",
+          "group": "navigation@0"
+        },
+        {
+          "command": "codingTools.openKeyboardShortcuts",
+          "when": "view == codingTools.settingsView",
+          "group": "navigation@1"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "codingTools.openSource",
+          "when": "view == codingTools.history && viewItem == codingToolsHistoryEntry",
+          "group": "inline@1"
+        },
+        {
+          "command": "codingTools.openDiff",
+          "when": "view == codingTools.history && viewItem == codingToolsHistoryEntry",
+          "group": "navigation@2"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "codingTools.history",
+        "contents": "保存された差分はまだありません。\nCoding Toolsでコピーした内容を貼り付けると、変更履歴が月別にここへ表示されます。\n[履歴フォルダーを開く](command:codingTools.revealHistoryFolder)"
+      }
+    ]
+  },
+  "scripts": {
+    "test": "node test/run-tests.js && node test/placement-tests.js && node test/confirmation-tests.js && node test/history-tests.js && node test/v06-tests.js && node test/v07-tests.js && node test/native-shortcuts-tests.js && node test/cross-navigation-tests.js && node test/jump-cycle-tests.js"
+  },
+  "activationEvents": [
+    "onView:codingTools.history",
+    "onCommand:codingTools.showHistoryPanel",
+    "onCommand:codingTools.openHistory",
+    "onStartupFinished",
+    "onView:codingTools.settingsView",
+    "onCommand:codingTools.openSettings",
+    "onCommand:codingTools.openVisualGuide",
+    "onCommand:codingTools.openKeyboardShortcuts",
+    "onCommand:codingTools.chooseRetentionDays"
+  ]
+}
