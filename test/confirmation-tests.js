@@ -33,10 +33,11 @@ function createKeyboard(panel, count) {
     indicator:{textContent:''}
   }));
   rows.forEach(r=>r.classList.parent=r);
-  const state={status:{textContent:''}, keydown:null, messages:[]};
+  const state={status:{textContent:''}, keydown:null, messages:[],buttons:{}};
+  for(const id of ['confirm','cancel'])state.buttons[id]={addEventListener(_event,handler){this.click=handler;}};
   const document={
     querySelectorAll(){return rows;},
-    getElementById(id){assert.equal(id,'status');return state.status;},
+    getElementById(id){return id==='status'?state.status:state.buttons[id];},
     addEventListener(name,fn){if(name==='keydown')state.keydown=fn;},
     body:{focus(){}}
   };
@@ -44,9 +45,9 @@ function createKeyboard(panel, count) {
     document,
     acquireVsCodeApi(){return {postMessage(msg){state.messages.push(msg);panel.message(msg);}}}
   });
-  const press = key => {
+  const press = (key, shiftKey=false) => {
     let prevented=false;
-    state.keydown({key,preventDefault(){prevented=true;}});
+    state.keydown({key,shiftKey,preventDefault(){prevented=true;}});
     assert.equal(prevented,true,`Key ${key} prevented`);
   };
   return {press,rows,state};
@@ -99,5 +100,28 @@ function createKeyboard(panel, count) {
     panel.dispose();
     assert.equal(await pending,null);
   }
-  console.log('Confirmation keyboard tests passed: 4');
+  {
+    const {vscode,panel}=stubPanel();
+    const pending=showConfirmation(vscode,{items:[{label:'基本ルール'},{label:'@media 768px'},{label:'@media 1200px'}]});
+    const {press,rows,state}=createKeyboard(panel,3);
+    press('Tab');assert.equal(rows[1].attrs['aria-checked'],'true');
+    press('Tab');assert.equal(rows[2].attrs['aria-checked'],'true');
+    press('Tab');assert.equal(rows[0].attrs['aria-checked'],'true');
+    press('Tab',true);assert.equal(rows[2].attrs['aria-checked'],'true');
+    assert.equal(state.messages.length,0,'Selecting with Tab must not execute');
+    press('Enter');assert.equal((await pending).label,'@media 1200px');
+  }
+  {
+    const {vscode,panel}=stubPanel();
+    const pending=showConfirmation(vscode,{items:[{label:'基本ルール'},{label:'既存@media'}]});
+    const {rows,state}=createKeyboard(panel,2);
+    rows[1].click();assert.equal(state.messages.length,0);
+    state.buttons.confirm.click();assert.equal((await pending).label,'既存@media');
+  }
+  {
+    const {vscode,panel}=stubPanel();
+    const pending=showConfirmation(vscode,{items:[{label:'基本ルール'}]});
+    const {state}=createKeyboard(panel,1);state.buttons.cancel.click();assert.equal(await pending,null);
+  }
+  console.log('Confirmation keyboard and mouse tests passed: 7');
 })().catch(e=>{console.error(e);process.exitCode=1;});

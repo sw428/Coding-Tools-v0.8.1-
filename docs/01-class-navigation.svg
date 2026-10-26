@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1040" height="400" viewBox="0 0 1040 400" role="img" aria-labelledby="ttl dsc">
-<title id="ttl">01｜クラス移動・範囲追加</title><desc id="dsc">HTML/CSSともクラス名全体を選択。空のclassはスキップ。追加選択は別コマンド。</desc><style>
+<title id="ttl">01｜クラス移動</title><desc id="dsc">HTML/CSSともクラス名全体を選択。空のclassはスキップ。前後へ1つずつ移動。</desc><style>
 svg { background:#F7F9FC; } text{font-family:"Yu Gothic","Noto Sans CJK JP",Meiryo,sans-serif;fill:#18253B}
 .t{font-size:26px;font-weight:700}.hint{font-size:15px;fill:#64748b}.boxTitle{font-size:18px;font-weight:700}.code{font-size:20px;font-family:ui-monospace,Consolas,monospace}.small{font-size:15px}.label{font-size:15px;font-weight:700}.num{font-size:15px;font-weight:700;fill:#ffffff}
 .flow{stroke:#4F79E9;stroke-width:3;fill:none;stroke-linecap:round;stroke-dasharray:7 8;animation:dash .95s linear infinite}
@@ -20,7 +20,7 @@ svg { background:#F7F9FC; } text{font-family:"Yu Gothic","Noto Sans CJK JP",Meir
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 <rect width="1040" height="400" fill="#F7F9FC"/><rect x="18" y="18" width="1004" height="364" rx="22" fill="#ffffff" stroke="#DFE7F2"/>
-<text x="46" y="59" class="t">01｜クラス移動・範囲追加</text><text x="46" y="86" class="hint">HTML/CSSともクラス名全体を選択。空のclassはスキップ。追加選択は別コマンド。</text><rect x="48" y="112" width="944" height="182" rx="12" class="base" /><text x="72" y="144" class="label">index.html</text><g><text x="77" y="192" class="code">&lt;section class="</text>
+<text x="46" y="59" class="t">01｜クラス移動</text><text x="46" y="86" class="hint">HTML/CSSともクラス名全体を選択。空のclassはスキップ。前後へ1つずつ移動。</text><rect x="48" y="112" width="944" height="182" rx="12" class="base" /><text x="72" y="144" class="label">index.html</text><g><text x="77" y="192" class="code">&lt;section class="</text>
 <rect class="hi ph1" x="277" y="167" width="65" height="33" rx="5"/><text x="285" y="192" class="code">card</text>
 <rect class="hi ph2" x="345" y="167" width="85" height="33" rx="5"/><text x="351" y="192" class="code">active</text>
 <text x="431" y="192" class="code">"&gt;</text>

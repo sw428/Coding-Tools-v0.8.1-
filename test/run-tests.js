@@ -5,6 +5,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const history = require('../history');
+const settings = require('../settings');
 const { findCssClasses, nextClass, findHtmlClasses, htmlClassAtCursor } = require('../selectors');
 
 function test(name, fn) {
@@ -114,9 +115,13 @@ function makeEditor(text, language = 'css') {
   });
 
   const registered = new Map();
-  const store = new Map();
+  const store = new Map([['coding-tools.slot.2', '前回の保存']]);
+  const statusItems = [];
+  let quickPickItems = [];
+  let pickAction = 'paste';
   const warnings=[];
   const confirmationPanels=[];
+  const confirmationActions=[];
   const treeProviders=new Map();
   let lastOpenedDocument=null;
   const fallbackCommands=[];
@@ -153,18 +158,25 @@ function makeEditor(text, language = 'css') {
         const panel = {webview:view, disposed:false, dispose() { if(!this.disposed) {this.disposed=true; if(this.didDispose)this.didDispose();} }, onDidDispose(cb) {this.didDispose=cb;}};
         confirmationPanels.push(panel);
         // UI simulation: accept the first (recommended) ON option after render.
-        queueMicrotask(() => { if(!panel.disposed)view.message({type:'confirm',index:0}); });
+        queueMicrotask(() => {
+          if(panel.disposed)return;
+          let chosen=confirmationActions.length?confirmationActions.shift():undefined;
+          if(typeof chosen==='function')chosen=chosen(view.html);
+          if(chosen==='cancel')return view.message({type:'cancel'});
+          const initial=Number(view.html.match(/class="item on[^"]*"[^>]*data-id="(\d+)"/)?.[1]||0);
+          view.message({type:'confirm',index:Number.isInteger(chosen)?chosen:initial});
+        });
         return panel;
       },
       showInformationMessage(message,options) { warnings.push(message); return options?.modal ? Promise.resolve('実行する') : message.startsWith('CSSの変更前後を確認してください') ? Promise.resolve('差分を確認して適用') : undefined; },
       showWarningMessage(message) { warnings.push(message); },
       setStatusBarMessage() {},
-      createStatusBarItem(){return {show(){},hide(){},dispose(){}};},
+      createStatusBarItem(id,alignment,priority){const item={id,alignment,priority,visible:false,disposed:false,show(){this.visible=true;},hide(){this.visible=false;},dispose(){this.disposed=true;}};statusItems.push(item);return item;},
       onDidChangeTextEditorSelection(){return {dispose(){}};},
       onDidChangeActiveTextEditor(){return {dispose(){}};},
       registerTreeDataProvider(id,provider){treeProviders.set(id,provider);return {dispose(){}};},
       createTreeView(id,options){treeProviders.set(id,options.treeDataProvider);return {dispose(){}};},
-      async showQuickPick(items) { return items[Math.min(2,items.length-1)]; },
+      async showQuickPick(items) { quickPickItems=items; return items.find(item=>item.action===pickAction) || (pickAction === 'cancel' ? undefined : items[Math.min(2,items.length-1)]); },
       async showTextDocument(document) {lastOpenedDocument=document;const editor=this.activeTextEditor;if(editor.document!==document) {this.activeTextEditor=makeEditor(document.getText(),document.languageId);this.activeTextEditor.document.uri=document.uri;}return this.activeTextEditor;}
     },
     workspace: {
@@ -191,9 +203,29 @@ function makeEditor(text, language = 'css') {
   const context={globalStorageUri:{fsPath:fs.mkdtempSync(path.join(os.tmpdir(),'coding-tools-extension-test-'))},subscriptions:[],globalState:{get(k) {return store.get(k);}, async update(k,v) {store.set(k,v);}}};
   extension.activate(context);
 
+  await test('status bar restores both slots and removed commands are unavailable', () => {
+    const slots=statusItems.filter(item=>typeof item.id==='string'&&item.id.startsWith('codingTools.slot'));
+    assert.equal(slots.length,8);
+    assert.equal(statusItems.find(item=>item.id==='codingTools.slot1').text,'(1)');
+    assert.equal(statusItems.find(item=>item.id==='codingTools.slot1.content').text,'/ 空');
+    assert.equal(statusItems.find(item=>item.id==='codingTools.slot2.content').text,'/ 前回の保存');
+    assert.ok(slots.every(item=>item.visible));
+    assert.ok(slots.every((item,i)=>!i||slots[i-1].priority>item.priority));
+    const hub=statusItems.find(item=>item.id==='codingTools.settings');
+    assert.equal(hub.text,'$(settings-gear) Coding Tools');
+    assert.equal(hub.command,'codingTools.openSettings');
+    assert.ok(hub.visible);
+    assert.equal(statusItems.find(item=>item.id==='codingTools.slot1.copy').command,'codingTools.copy1');
+    assert.equal(statusItems.find(item=>item.id==='codingTools.slot1.paste').command,'codingTools.paste1');
+    for(const id of ['extendNextClass','extendPreviousClass','chooseCopySlot','choosePasteSlot','copyClassName','smartCopy','smartPaste'])assert.ok(!registered.has('codingTools.'+id));
+    const pkg=require('../package.json');
+    for(const id of ['copy1','paste1','copy2','paste2']) {
+      assert.ok(pkg.contributes.menus.commandPalette.some(item=>item.command==='codingTools.'+id&&item.when==='false'));
+      assert.ok(pkg.contributes.keybindings.some(item=>item.command==='codingTools.'+id));
+    }
+  });
   await test('registers two numbered copy/paste slots and two cross-file navigation commands', () => {
     for(let i=1;i<=2;i++) {assert.ok(registered.has(`codingTools.copy${i}`));assert.ok(registered.has(`codingTools.paste${i}`));}
-    assert.ok(registered.size >= 27);
     assert.ok(registered.has('codingTools.jumpToCss'));
     assert.ok(registered.has('codingTools.jumpToHtml'));
     assert.ok(!registered.has('codingTools.copy3'));
@@ -285,21 +317,21 @@ function makeEditor(text, language = 'css') {
     const editor=makeEditor(html,'html');
     editor.selection=new Selection(new Position(1,5),new Position(1,5));
     vscodeMock.window.activeTextEditor=editor;
-    await registered.get('codingTools.copyClassName')();
+    await registered.get('codingTools.copy1')();
     assert.equal(clipboard,'second');
   });
   await test('copy class name sends plain token to clipboard', async () => {
     const editor=makeEditor('<div class="card highlight">', 'html');
     editor.selection=new Selection(new Position(0,17),new Position(0,17));
     vscodeMock.window.activeTextEditor=editor;
-    await registered.get('codingTools.copyClassName')();
+    await registered.get('codingTools.copy1')();
     assert.equal(clipboard,'highlight');
   });
 
-  await test('QuickPick selects second of two slots', async () => {
+  await test('status bar slot 2 pastes without a slot-number picker', async () => {
     const editor=makeEditor('','css');
     vscodeMock.window.activeTextEditor=editor;
-    await registered.get('codingTools.choosePasteSlot')();
+    await registered.get('codingTools.showSlot2')();
     assert.equal(editor.document.text,'two\n');
   });
   await test('does not paste from unset slot', async () => {
@@ -310,41 +342,41 @@ function makeEditor(text, language = 'css') {
     assert.equal(editor.document.text,'untouched');
     assert.match(warnings.at(-1), /保存枠1は空/);
   });
-  await test('HTML class selection + ordinary copy gives undotted text in find/search and dotted CSS paste', async () => {
+  await test('HTML class slot copy gives undotted text and dotted CSS slot paste', async () => {
     const html='<div class="card active">';
     const editor=makeEditor(html,'html');
     vscodeMock.window.activeTextEditor=editor;
     editor.selection=new Selection(editor.document.positionAt(html.indexOf('active')),editor.document.positionAt(html.indexOf('active')+6));
-    await registered.get('codingTools.smartCopy')();
+    await registered.get('codingTools.copy1')();
     assert.equal(clipboard,'active'); // Finder or Search UI uses ordinary paste.
     const cssEditor=makeEditor('','css');
     vscodeMock.window.activeTextEditor=cssEditor;
-    await registered.get('codingTools.smartPaste')();
+    await registered.get('codingTools.paste1')();
     assert.equal(cssEditor.document.text,'.active {\n}\n');
   });
-  await test('CSS .class selection + ordinary copy gives undotted clipboard and dotted CSS paste', async () => {
+  await test('CSS .class slot copy removes the dot and paste avoids a duplicate dot', async () => {
     const css='.card:hover { color: red; }';
     const editor=makeEditor(css,'css');
     vscodeMock.window.activeTextEditor=editor;
     editor.selection=new Selection(editor.document.positionAt(0), editor.document.positionAt(5));
-    await registered.get('codingTools.smartCopy')();
+    await registered.get('codingTools.copy1')();
     assert.equal(clipboard,'card');
     const dest=makeEditor('.','css');
     dest.selection=new Selection(new Position(0,1),new Position(0,1));
     vscodeMock.window.activeTextEditor=dest;
-    await registered.get('codingTools.smartPaste')();
+    await registered.get('codingTools.paste1')();
     assert.equal(dest.document.text,'.card'); // do not add a second dot
   });
-  await test('copyClassName works in CSS with no selection and pastes with dot', async () => {
+  await test('slot copy handles a CSS class under the caret and pastes with dot', async () => {
     const css='.teacher {display:block;}';
     const editor=makeEditor(css,'css');
     editor.selection=new Selection(new Position(0,3),new Position(0,3));
     vscodeMock.window.activeTextEditor=editor;
-    await registered.get('codingTools.copyClassName')();
+    await registered.get('codingTools.copy1')();
     assert.equal(clipboard,'teacher');
     const dest=makeEditor('', 'css');
     vscodeMock.window.activeTextEditor=dest;
-    await registered.get('codingTools.smartPaste')();
+    await registered.get('codingTools.paste1')();
     assert.equal(dest.document.text,'.teacher {\n}\n');
   });
   await test('numbered slot class copy from CSS pastes with dot in CSS and without dot in HTML', async () => {
@@ -358,7 +390,7 @@ function makeEditor(text, language = 'css') {
     const dest=makeEditor('', 'css');
     vscodeMock.window.activeTextEditor=dest;
     await registered.get('codingTools.paste1')();
-    assert.equal(dest.document.text,'.subject');
+    assert.equal(dest.document.text,'.subject {\n}\n');
     const htmlDest=makeEditor('<div class="">', 'html');
     htmlDest.selection=new Selection(new Position(0,12),new Position(0,12));
     vscodeMock.window.activeTextEditor=htmlDest;
@@ -375,38 +407,37 @@ function makeEditor(text, language = 'css') {
     const cssDest=makeEditor('','css');
     vscodeMock.window.activeTextEditor=cssDest;
     await registered.get('codingTools.paste2')();
-    assert.equal(cssDest.document.text,'.card');
+    assert.equal(cssDest.document.text,'.card {\n}\n');
   });
   await test('ordinary CSS snippet copy and paste remains unchanged without class conversion', async () => {
     const editor=makeEditor('.card {color: red;}', 'css');
     editor.selection=new Selection(new Position(0,0),new Position(0,19));
     vscodeMock.window.activeTextEditor=editor;
-    await registered.get('codingTools.smartCopy')();
+    await registered.get('codingTools.copy1')();
     assert.equal(clipboard,'.card {color: red;}');
     const dest=makeEditor('', 'css');
     vscodeMock.window.activeTextEditor=dest;
-    await registered.get('codingTools.smartPaste')();
+    await registered.get('codingTools.paste1')();
     assert.equal(dest.document.text,'.card {color: red;}');
-    assert.equal(fallbackCommands.at(-1), 'editor.action.clipboardPasteAction');
   });
-  await test('clipboard change after class copy disables dot insertion on CSS paste', async () => {
+  await test('slot class paste remains independent from later OS clipboard changes', async () => {
     const editor=makeEditor('<p class="new">','html');
     editor.selection=new Selection(new Position(0,10),new Position(0,10));
     vscodeMock.window.activeTextEditor=editor;
-    await registered.get('codingTools.copyClassName')();
+    await registered.get('codingTools.copy1')();
     clipboard='hello world';
     const dest=makeEditor('', 'css');
     vscodeMock.window.activeTextEditor=dest;
-    await registered.get('codingTools.smartPaste')();
-    assert.equal(dest.document.text,'hello world');
+    await registered.get('codingTools.paste1')();
+    assert.equal(dest.document.text,'.new {\n}\n');
   });
   await test('ordinary copy after class copy resets the class flag', async () => {
     const editor=makeEditor('.item {}', 'css');
     editor.selection=new Selection(new Position(0,0),new Position(0,5));
     vscodeMock.window.activeTextEditor=editor;
-    await registered.get('codingTools.smartCopy')();
+    await registered.get('codingTools.copy1')();
     editor.selection=new Selection(new Position(0,0),new Position(0,8));
-    await registered.get('codingTools.smartCopy')();
+    await registered.get('codingTools.copy1')();
     assert.equal(clipboard,'.item {}');
     assert.equal(store.get('coding-tools.lastClassClipboard'),null);
   });
@@ -421,17 +452,18 @@ function makeEditor(text, language = 'css') {
     await registered.get('codingTools.paste2')();
     assert.equal(dest.document.text,'.card { color: blue; }');
   });
-  await test('smart paste inserts class rule between HTML-adjacent CSS classes', async () => {
+  await test('explicit CSS placement inserts a rule between HTML-adjacent classes', async () => {
     const html='<section class="course"><h2 class="course__title"></h2><p class="course__text"></p><a class="course__link"></a></section>';
     const source=makeEditor(html,'html');
     const start=html.indexOf('course__text');
     source.selection=new Selection(source.document.positionAt(start),source.document.positionAt(start+'course__text'.length));
     vscodeMock.window.activeTextEditor=source;
-    await registered.get('codingTools.smartCopy')();
+    await registered.get('codingTools.copy1')();
     assert.equal(clipboard,'course__text');
     const css=makeEditor('.course {}\n.course__title {}\n.course__link {}','css');
     vscodeMock.window.activeTextEditor=css;
-    await registered.get('codingTools.smartPaste')();
+    css.selection=new Selection(css.document.positionAt(css.document.text.length),css.document.positionAt(css.document.text.length));
+    await registered.get('codingTools.paste1')();
     const updated=css.document.text;
     assert.ok(updated.indexOf('.course__title')<updated.indexOf('.course__text'));
     assert.ok(updated.indexOf('.course__text')<updated.indexOf('.course__link'));
@@ -441,11 +473,12 @@ function makeEditor(text, language = 'css') {
     const html=makeEditor('<div class="card"></div>','html');
     html.selection=new Selection(new Position(0,13),new Position(0,13));
     vscodeMock.window.activeTextEditor=html;
-    await registered.get('codingTools.copyClassName')();
+    await registered.get('codingTools.copy1')();
     const css=makeEditor('.title {}\n.card { color: blue; }','css');
     vscodeMock.window.activeTextEditor=css;
     const old=css.document.text;
-    await registered.get('codingTools.smartPaste')();
+    css.selection=new Selection(css.document.positionAt(css.document.text.length),css.document.positionAt(css.document.text.length));
+    await registered.get('codingTools.paste1')();
     assert.equal(css.document.text,old);
     assert.equal(css.document.offsetAt(css.selection.active),css.document.text.indexOf('.card'));
   });
@@ -453,26 +486,28 @@ function makeEditor(text, language = 'css') {
     const html=makeEditor('<p style="font-size:24px">title</p>','html');
     html.selection=new Selection(new Position(0,26),new Position(0,31));
     vscodeMock.window.activeTextEditor=html;
-    await registered.get('codingTools.smartCopy')();
+    await registered.get('codingTools.copy1')();
     const destination=makeEditor('body {font-family: }','css');
     destination.selection=new Selection(new Position(0,18),new Position(0,18));
     vscodeMock.window.activeTextEditor=destination;
-    await registered.get('codingTools.smartPaste')();
-    assert.ok(fallbackCommands.at(-1)==='editor.action.clipboardPasteAction');
+    await registered.get('codingTools.paste1')();
+    assert.equal(destination.document.text,'body {font-family:title }');
   });
   await test('ambiguous existing base/media shows conditions rather than auto merging', async () => {
     const editor=makeEditor('.card {}\n@media (min-width: 768px) {.card {}}','css');
     editor.selection=new Selection(new Position(0,0),new Position(0,0));
     vscodeMock.window.activeTextEditor=editor;
-    await store.set('coding-tools.lastClassClipboard','card');
+    store.set('coding-tools.slot.1','card');
+    store.set('coding-tools.class-slot.1',true);
+    editor.selection=new Selection(editor.document.positionAt(editor.document.text.length),editor.document.positionAt(editor.document.text.length));
     clipboard='card';
     const original=vscodeMock.window.showQuickPick;
     let options=[];
     vscodeMock.window.showQuickPick=async(items)=>{options=items;return items[0]};
-    try {await registered.get('codingTools.smartPaste')();} finally {vscodeMock.window.showQuickPick=original;}
+    try {await registered.get('codingTools.paste1')();} finally {vscodeMock.window.showQuickPick=original;}
     const display=confirmationPanels.at(-1).webview.html;
-    assert.match(display, /既存へ移動/);
-    assert.match(display, /既存の条件内に追加/);
+    assert.match(display, /既存ルールへ移動/);
+    assert.match(display, /空ルールを追加：@media/);
     assert.match(display, /ArrowRight/);
     assert.match(display, /ArrowLeft/);
     assert.match(display, /ArrowDown/);
@@ -480,11 +515,12 @@ function makeEditor(text, language = 'css') {
     assert.match(display, /Enter/);
     assert.equal(editor.document.text,'.card {}\n@media (min-width: 768px) {.card {}}');
   });
-  await test('explicit CSS location command does not paste random text', async()=>{
-    const editor=makeEditor('<p></p>','html');vscodeMock.window.activeTextEditor=editor;
-    clipboard='font-family: serif;';
-    await registered.get('codingTools.placeCss')();
-    assert.equal(editor.document.text,'<p></p>');
+  await test('standalone CSS placement and paste-option commands are removed', () => {
+    for(const id of ['codingTools.placeCss','codingTools.pasteOptions']) {
+      assert.ok(!registered.has(id));
+      assert.ok(!require('../package.json').contributes.commands.some(item=>item.command===id));
+      assert.ok(!require('../package.json').contributes.keybindings.some(item=>item.command===id));
+    }
   });
   await test('cross-jumps HTML to CSS and CSS back to HTML without edits', async()=>{
     const html='<section class="card active"><p class="card">hello</p></section>';
@@ -541,7 +577,219 @@ function makeEditor(text, language = 'css') {
       vscodeMock.window.showQuickPick=savedPick;
     }
   });
+  await test('status bar click copies, updates its preview and cancels without changes', async () => {
+    const editor=makeEditor('<p class="sample">','html');
+    editor.selection=new Selection(new Position(0,12),new Position(0,12));
+    vscodeMock.window.activeTextEditor=editor;
+    pickAction='copy';
+    await registered.get('codingTools.showSlot1')();
+    assert.equal(store.get('coding-tools.slot.1'),'sample');
+    assert.equal(store.get('coding-tools.class-slot.1'),true);
+    const item=statusItems.find(item=>item.id==='codingTools.slot1.content');
+    assert.equal(item.text,'/ sample');
+    pickAction='cancel';
+    const before=[...store];
+    const source=editor.document.text;
+    await registered.get('codingTools.showSlot1')();
+    assert.deepEqual([...store],before);
+    assert.equal(editor.document.text,source);
+    pickAction='paste';
+  });
+  await test('empty slot offers copy only and non-class preview escapes icons and truncates', async () => {
+    store.delete('coding-tools.slot.2');
+    const text='$(alert)\n'+ 'a'.repeat(80);
+    const editor=makeEditor(text,'plaintext');
+    editor.selection=new Selection(new Position(0,0),new Position(1,80));
+    vscodeMock.window.activeTextEditor=editor;
+    pickAction='copy';
+    await registered.get('codingTools.showSlot2')();
+    assert.deepEqual(quickPickItems.map(item=>item.action),['copy']);
+    assert.equal(store.get('coding-tools.slot.2'),text);
+    assert.equal(store.get('coding-tools.class-slot.2'),false);
+    const item=statusItems.find(item=>item.id==='codingTools.slot2.content');
+    assert.ok(item.text.includes('＄(alert)'));
+    assert.ok(item.text.endsWith('…'));
+    assert.ok(!item.text.includes('\n'));
+    assert.ok(item.tooltip.includes('クリック'));
+    pickAction='paste';
+  });
+  await test('both slots add a single dot only for class tokens in CSS, SCSS and Less', async () => {
+    for(const n of [1,2]) {
+      const source=makeEditor('.sample {}','css');
+      source.selection=new Selection(new Position(0,2),new Position(0,2));
+      vscodeMock.window.activeTextEditor=source;
+      await registered.get('codingTools.copy'+n)();
+      for(const language of ['css','scss','less'])for(const prefix of ['', '.']) {
+        const dest=makeEditor(prefix,language);
+        dest.selection=new Selection(new Position(0,prefix.length),new Position(0,prefix.length));
+        vscodeMock.window.activeTextEditor=dest;
+        await registered.get('codingTools.paste'+n)();
+        assert.equal(dest.document.text,language==='css'&&prefix===''?'.sample {\n}\n':'.sample');
+      }
+      const dest=makeEditor('', 'html');
+      vscodeMock.window.activeTextEditor=dest;
+      await registered.get('codingTools.paste'+n)();
+      assert.equal(dest.document.text,'sample');
+    }
+  });
+  await test('slot menu does not edit a different editor or act after closing the source', async () => {
+    const original=vscodeMock.window.showQuickPick;
+    const editor=makeEditor('original','plaintext');
+    const other=makeEditor('other','plaintext');
+    const before=[...store];
+    try {
+      vscodeMock.window.activeTextEditor=editor;
+      vscodeMock.window.showQuickPick=async()=>{vscodeMock.window.activeTextEditor=other;return {action:'copy'};};
+      await registered.get('codingTools.showSlot1')();
+      assert.deepEqual([...store],before);
+      assert.equal(other.document.text,'other');
+      vscodeMock.window.activeTextEditor=editor;
+      vscodeMock.window.showQuickPick=async()=>{editor.document.isClosed=true;return {action:'paste'};};
+      await registered.get('codingTools.showSlot1')();
+      assert.equal(editor.document.text,'original');
+      vscodeMock.window.activeTextEditor=null;
+      await registered.get('codingTools.showSlot1')();
+      assert.match(warnings.at(-1),/テキストエディタ/);
+    } finally {vscodeMock.window.showQuickPick=original;}
+  });
+  await test('each slot display combination is independent and hidden controls retain keyboard operations', async () => {
+    const opts=settings.SLOT_DISPLAY_OPTIONS;
+    for(const n of [1,2]) {
+      const other=n===1?2:1;
+      const otherItems=statusItems.filter(item=>typeof item.id==='string'&&item.id.startsWith(`codingTools.slot${other}`));
+      const otherBefore=otherItems.map(item=>({text:item.text,visible:item.visible}));
+      for(let mask=0;mask<16;mask++) {
+        for(const [bit,option] of opts.entries()) {
+          const key=settings.slotDisplayKey(n,option.part);
+          const expected=Boolean(mask&(1<<bit));
+          if(settings.enabled(context,key)!==expected)await registered.get('codingTools.toggleSetting')(key);
+          assert.equal(settings.enabled({...context},key),expected,'Display state must persist');
+        }
+        const shown=part=>Boolean(mask&(1<<opts.findIndex(option=>option.part===part)));
+        const number=statusItems.find(item=>item.id===`codingTools.slot${n}`);
+        const copy=statusItems.find(item=>item.id===`codingTools.slot${n}.copy`);
+        const paste=statusItems.find(item=>item.id===`codingTools.slot${n}.paste`);
+        const content=statusItems.find(item=>item.id===`codingTools.slot${n}.content`);
+        assert.equal(number.visible,shown('number'));
+        assert.equal(content.visible,shown('content'));
+        assert.equal(copy.visible,shown('actions')||shown('shortcuts'));
+        assert.equal(paste.visible,shown('actions')||shown('shortcuts'));
+        assert.equal(copy.text.includes('コピー'),shown('actions'));
+        assert.equal(paste.text.includes('貼り付け'),shown('actions'));
+        assert.equal(copy.text.includes('+Shift+'),shown('shortcuts'));
+        assert.deepEqual(otherItems.map(item=>({text:item.text,visible:item.visible})),otherBefore);
+      }
+      for(const option of opts) {
+        const key=settings.slotDisplayKey(n,option.part);
+        if(settings.enabled(context,key))await registered.get('codingTools.toggleSetting')(key);
+      }
+      const source=makeEditor('<p class="still-active">','html');
+      source.selection=new Selection(new Position(0,12),new Position(0,12));
+      vscodeMock.window.activeTextEditor=source;
+      await registered.get('codingTools.copy'+n)();
+      const destination=makeEditor('','css');
+      vscodeMock.window.activeTextEditor=destination;
+      await registered.get('codingTools.paste'+n)();
+      assert.equal(destination.document.text,'.still-active {\n}\n');
+      assert.ok(statusItems.find(item=>item.id==='codingTools.settings').visible,'Settings must remain reachable');
+      for(const option of opts)await registered.get('codingTools.toggleSetting')(settings.slotDisplayKey(n,option.part));
+    }
+  });
+  function chooseCssOption(label){
+    return html=>{
+      const rows=[...html.matchAll(/<li[^>]*data-id="(\d+)"[^>]*>[\s\S]*?<\/li>/g)];
+      const row=rows.find(row=>row[0].includes(label));
+      assert.ok(row,'Missing CSS option: '+label);
+      for(const removed of ['新規 @media','新しい @media','関係・位置・状態のセレクタを指定','通常の貼り付け','CSSファイルを選択'])assert.ok(!html.includes(removed),removed);
+      return Number(row[1]);
+    };
+  }
+  await test('slot paste uses the current CSS and offers existing media in one selection screen', async () => {
+    store.set('coding-tools.slot.1','panel');store.set('coding-tools.class-slot.1',true);
+    const before='.base {}\n@media (min-width: 600px) { .base {} }\n@media (min-width: 1000px) { .base {} }\n';
+    const editor=makeEditor(before,'css');editor.selection=new Selection(editor.document.positionAt(before.length),editor.document.positionAt(before.length));
+    vscodeMock.window.activeTextEditor=editor;
+    const previousFind=vscodeMock.workspace.findFiles;
+    vscodeMock.workspace.findFiles=async()=>{throw Error('Paste must not choose another CSS file');};
+    const panelsBefore=confirmationPanels.length;
+    try {confirmationActions.push(chooseCssOption('空ルールを追加：@media (min-width: 1000px)'));await registered.get('codingTools.paste1')();}
+    finally {vscodeMock.workspace.findFiles=previousFind;}
+    assert.equal(confirmationPanels.length,panelsBefore+1,'Media must not require a second picker');
+    const rules=require('../placement').rules(require('../placement').parseCss(editor.document.text));
+    const added=rules.find(rule=>rule.prelude==='.panel');
+    assert.equal(added.parent.prelude,'@media (min-width: 1000px)');
+    assert.ok(editor.document.text.includes('@media (min-width: 600px) { .base {} }'));
+  });
+  await test('slot 2 can jump to the selected existing media rule without editing CSS', async () => {
+    store.set('coding-tools.slot.2','panel');store.set('coding-tools.class-slot.2',true);
+    const before='.panel {}\n@media screen { .panel {} }\n';
+    const editor=makeEditor(before,'css');editor.selection=new Selection(editor.document.positionAt(before.length),editor.document.positionAt(before.length));
+    vscodeMock.window.activeTextEditor=editor;
+    confirmationActions.push(chooseCssOption('既存ルールへ移動：@media screen'));
+    await registered.get('codingTools.paste2')();
+    assert.equal(editor.document.text,before);
+    assert.equal(editor.document.offsetAt(editor.selection.active),before.lastIndexOf('.panel'));
+  });
+  await test('cancelled or stale CSS placement never applies an insertion', async () => {
+    store.set('coding-tools.slot.1','cancelled');store.set('coding-tools.class-slot.1',true);
+    const editor=makeEditor('','css');vscodeMock.window.activeTextEditor=editor;
+    confirmationActions.push('cancel');await registered.get('codingTools.paste1')();assert.equal(editor.document.text,'');
+    confirmationActions.push(()=>{editor.document.text='/* external change */';return 0;});
+    await registered.get('codingTools.paste1')();assert.equal(editor.document.text,'/* external change */');
+    assert.match(warnings.at(-1),/選んでいる間にCSSが変更/);
+  });
+  await test('CSS comments, strings and declaration values paste names without dots or menus', async () => {
+    store.set('coding-tools.slot.1','literal');store.set('coding-tools.class-slot.1',true);
+    for(const example of ['/* ¦ */','// ¦','.x { content: "¦"; }','.x { color: ¦; }','.x { background: url(https://example.com/¦); }']) {
+      const at=example.indexOf('¦');const text=example.replace('¦','');
+      const editor=makeEditor(text,'css');editor.selection=new Selection(editor.document.positionAt(at),editor.document.positionAt(at));
+      vscodeMock.window.activeTextEditor=editor;const panels=confirmationPanels.length;
+      await registered.get('codingTools.paste1')();
+      assert.equal(editor.document.text,example.replace('¦','literal'));assert.equal(confirmationPanels.length,panels);
+    }
+  });
+  await test('copy slots retain their own HTML neighbors for empty-rule placement', async () => {
+    for(const [n,previous,next] of [[1,'course__title','course__link'],[2,'course__other','course__end']]) {
+      const html='<div class="'+previous+'"></div><p class="course__text"></p><a class="'+next+'"></a>';
+      const source=makeEditor(html,'html');const at=html.indexOf('course__text');
+      source.selection=new Selection(source.document.positionAt(at),source.document.positionAt(at+12));vscodeMock.window.activeTextEditor=source;
+      await registered.get('codingTools.copy'+n)();
+      assert.equal(store.get('coding-tools.slot-context.'+n).before,previous);
+    }
+    const before='.course__title {}\n.other {}\n.course__link {}\n.course__other {}\n.course__end {}\n';
+    const editor=makeEditor(before,'css');editor.selection=new Selection(editor.document.positionAt(before.length),editor.document.positionAt(before.length));vscodeMock.window.activeTextEditor=editor;
+    confirmationActions.push(chooseCssOption('空ルールを追加：基本ルール'));await registered.get('codingTools.paste1')();
+    assert.ok(editor.document.text.indexOf('.course__text')<editor.document.text.indexOf('.course__link'));
+  });
+  await test('root empty-rule placement stays outside nested CSS rules and recognizes leading comments', async () => {
+    store.set('coding-tools.slot.1','course__text');store.set('coding-tools.class-slot.1',true);
+    store.set('coding-tools.slot-context.1',{name:'course__text',before:'course__title',after:'course__link'});
+    const before='/* heading */\n.container { .course__title {} .course__link {} }\n';
+    const editor=makeEditor(before,'css');editor.selection=new Selection(editor.document.positionAt(before.length),editor.document.positionAt(before.length));vscodeMock.window.activeTextEditor=editor;
+    confirmationActions.push(chooseCssOption('空ルールを追加：基本ルール'));await registered.get('codingTools.paste1')();
+    const rules=require('../placement').rules(require('../placement').parseCss(editor.document.text));
+    assert.ok(rules.some(rule=>rule.prelude==='.container'));
+    assert.equal(rules.find(rule=>rule.prelude==='.course__text').parent.type,'root');
+    assert.ok(editor.document.text.startsWith(before));
+    store.set('coding-tools.slot.1','container');
+    editor.selection=new Selection(editor.document.positionAt(editor.document.text.length),editor.document.positionAt(editor.document.text.length));
+    const original=editor.document.text;confirmationActions.push(chooseCssOption('既存ルールへ移動：基本'));await registered.get('codingTools.paste1')();
+    assert.equal(editor.document.text,original);assert.equal(editor.document.offsetAt(editor.selection.active),before.indexOf('.container'));
+  });
+  await test('closing a CSS file during final diff confirmation prevents applying edits', async () => {
+    store.set('coding-tools.slot.1','closed');store.set('coding-tools.class-slot.1',true);
+    const editor=makeEditor('','css');vscodeMock.window.activeTextEditor=editor;
+    const original=vscodeMock.window.showInformationMessage;
+    vscodeMock.window.showInformationMessage=(message,...args)=>{
+      if(message.startsWith('CSSの変更前後を確認してください')){editor.document.isClosed=true;return Promise.resolve('差分を確認して適用');}
+      return original(message,...args);
+    };
+    try {confirmationActions.push(0);await registered.get('codingTools.paste1')();}
+    finally {vscodeMock.window.showInformationMessage=original;}
+    assert.equal(editor.document.text,'');assert.match(warnings.at(-1),/変更または閉じられた/);
+  });
   for(const s of context.subscriptions) s.dispose?.();
+  assert.ok(statusItems.every(item=>item.disposed),'Status bar items must be disposed');
   await require('node:fs/promises').rm(context.globalStorageUri.fsPath,{recursive:true,force:true});
   console.log(`\nAll tests passed.`);
 })().catch((err)=>{console.error(err);process.exitCode=1;});

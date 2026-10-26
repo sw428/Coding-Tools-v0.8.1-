@@ -5,6 +5,7 @@
 | ファイル | 主な責務 |
 | --- | --- |
 | `extension.js` | コマンド登録・コピー枠・移動・貼り付けの入口 |
+| `paste-context.js` | コメント・文字列・宣言値・セレクタ・構造位置の判定 |
 | `selectors.js` | CSS/HTMLクラスの抽出 |
 | `cross-navigation.js` | HTML ⇄ CSS の対応候補探索 |
 | `placement.js` | CSSの配置候補判定 |

@@ -33,8 +33,9 @@ function parseCss(text) {
     if ((c===')' || c===']') && depth) depth--;
     if (depth) continue;
     if (c === '{') {
-      const prelude = text.slice(from,i).trim();
-      const start = from + Math.max(0,text.slice(from,i).indexOf(prelude));
+      // Leading comments belong to the original text, not to the selector.
+      const start = from + Math.max(0,clean.slice(from,i).search(/\S/));
+      const prelude = text.slice(start,i).trim();
       const type = prelude.startsWith('@') ? 'at' : 'rule';
       // invalid declaration object / unknown block: never edit inside automatically
       const node = {type, prelude, start, brace:i, end:null, parent, children:[]};

@@ -5,12 +5,6 @@ const settings = require('./settings');
 
 function makeHistoryUI(vscode, context) {
   const changed = new vscode.EventEmitter();
-  const status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 30);
-  status.text = '$(history) Coding Tools Diff';
-  status.tooltip = 'Coding Tools 履歴パネルを開く（月別の差分へ直接移動）。';
-  status.command = 'codingTools.showHistoryPanel';
-  status.show();
-
   let cachedEntries = null;
   const load = async () => {if (!cachedEntries) cachedEntries = await history.entries(context); return cachedEntries;};
   const provider = {
@@ -54,7 +48,7 @@ function makeHistoryUI(vscode, context) {
     showCollapseAll: true,
   });
   context.subscriptions.push(
-    treeView,changed,status,
+    treeView,changed,
     vscode.commands.registerCommand('codingTools.showHistoryPanel',async()=>{
       try {
         await vscode.commands.executeCommand('workbench.view.explorer');

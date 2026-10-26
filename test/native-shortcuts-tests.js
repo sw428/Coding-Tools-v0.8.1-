@@ -10,7 +10,7 @@ for(const entry of binds){
     if(entry[key])assert.ok(!reserved.has(entry[key].toLowerCase()),`native ${entry[key]} overridden by ${entry.command}`);
   }
 }
-for(const id of ['codingTools.smartCopy','codingTools.smartPaste','codingTools.copy1','codingTools.paste1']){
+for(const id of ['codingTools.copy1','codingTools.paste1','codingTools.copy2','codingTools.paste2']){
   assert.ok(pkg.contributes.commands.some(x=>x.command===id),`${id} must remain available`);
 }
 assert.ok(binds.some(e=>e.command==='codingTools.copy1'));

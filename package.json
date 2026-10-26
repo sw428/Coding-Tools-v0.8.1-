@@ -1,7 +1,7 @@
 {
   "name": "coding-tools",
   "displayName": "Coding Tools",
-  "description": "β版：変更前後Diffで確認する安全な空ルール追加、HTML/CSS直接ジャンプ、2枠コピペ、履歴",
+  "description": "クラスに特化したシームレスなコピー・貼り付け・移動。コピー時の構造情報を使うCSS自動配置を設計中（β）",
   "version": "0.8.2",
   "publisher": "elliotveyne",
   "author": {
@@ -63,16 +63,6 @@
         "category": "Coding Tools"
       },
       {
-        "command": "codingTools.chooseCopySlot",
-        "title": "コピー先を一覧から選択",
-        "category": "Coding Tools"
-      },
-      {
-        "command": "codingTools.choosePasteSlot",
-        "title": "貼り付け元を一覧から選択",
-        "category": "Coding Tools"
-      },
-      {
         "command": "codingTools.nextClass",
         "title": "次のクラスへ移動（HTML / CSS）",
         "category": "Coding Tools"
@@ -83,43 +73,8 @@
         "category": "Coding Tools"
       },
       {
-        "command": "codingTools.extendNextClass",
-        "title": "次のクラスも追加選択",
-        "category": "Coding Tools"
-      },
-      {
-        "command": "codingTools.extendPreviousClass",
-        "title": "前のクラスも追加選択",
-        "category": "Coding Tools"
-      },
-      {
         "command": "codingTools.pushAndLog",
         "title": "Git pushを実行して履歴を記録",
-        "category": "Coding Tools"
-      },
-      {
-        "command": "codingTools.copyClassName",
-        "title": "カーソル上のクラス名をコピー",
-        "category": "Coding Tools"
-      },
-      {
-        "command": "codingTools.smartCopy",
-        "title": "スマートコピー（クラスならドットなし）",
-        "category": "Coding Tools"
-      },
-      {
-        "command": "codingTools.smartPaste",
-        "title": "CSSスマート貼り付け（クラスならドット付き）",
-        "category": "Coding Tools"
-      },
-      {
-        "command": "codingTools.placeCss",
-        "title": "CSSに適切な場所へ追加 / 既存へ移動",
-        "category": "Coding Tools"
-      },
-      {
-        "command": "codingTools.pasteOptions",
-        "title": "貼り付け先を選択（通常 / CSSへ整理）",
         "category": "Coding Tools"
       },
       {
@@ -166,7 +121,7 @@
       },
       {
         "command": "codingTools.openSettings",
-        "title": "履歴・最終確認の設定を開く（settings.jsonを変更しない）",
+        "title": "設定全般を開く",
         "category": "Coding Tools",
         "icon": "$(settings-gear)"
       },
@@ -177,7 +132,7 @@
       },
       {
         "command": "codingTools.chooseRetentionDays",
-        "title": "履歴の保存期間を変更（1〜360日）",
+        "title": "履歴の記録・保存期間を変更（OFF / 1〜360日）",
         "category": "Coding Tools"
       },
       {
@@ -258,40 +213,10 @@
         "when": "editorTextFocus && (editorLangId == css || editorLangId == scss || editorLangId == less || editorLangId == html || editorLangId == vue || editorLangId == php || editorLangId == javascriptreact || editorLangId == typescriptreact)"
       },
       {
-        "command": "codingTools.copyClassName",
-        "key": "ctrl+alt+shift+c",
-        "mac": "cmd+alt+shift+c",
-        "when": "editorTextFocus"
-      },
-      {
-        "command": "codingTools.placeCss",
-        "key": "ctrl+alt+p",
-        "mac": "cmd+alt+p",
-        "when": "editorTextFocus"
-      },
-      {
-        "command": "codingTools.pasteOptions",
-        "key": "ctrl+alt+v",
-        "mac": "cmd+alt+v",
-        "when": "editorTextFocus"
-      },
-      {
         "command": "codingTools.showHistoryPanel",
         "key": "ctrl+alt+h",
         "mac": "cmd+alt+h",
         "when": "!inQuickOpen"
-      },
-      {
-        "command": "codingTools.extendNextClass",
-        "key": "ctrl+alt+shift+j",
-        "mac": "cmd+alt+shift+j",
-        "when": "editorTextFocus && (editorLangId == css || editorLangId == scss || editorLangId == less || editorLangId == html || editorLangId == vue || editorLangId == php || editorLangId == javascriptreact || editorLangId == typescriptreact)"
-      },
-      {
-        "command": "codingTools.extendPreviousClass",
-        "key": "ctrl+alt+shift+k",
-        "mac": "cmd+alt+shift+k",
-        "when": "editorTextFocus && (editorLangId == css || editorLangId == scss || editorLangId == less || editorLangId == html || editorLangId == vue || editorLangId == php || editorLangId == javascriptreact || editorLangId == typescriptreact)"
       },
       {
         "command": "codingTools.cycleNextJump",
@@ -312,12 +237,6 @@
     "configuration": {
       "title": "Coding Tools",
       "properties": {
-        "codingTools.preferredStylesheet": {
-          "type": "string",
-          "default": "",
-          "scope": "resource",
-          "description": "HTMLからCSSへ追加する場合の優先CSSファイル。例: css/style.css（ワークスペースの相対パス）。空なら候補から選択。"
-        },
         "codingTools.placementRules": {
           "type": "object",
           "default": {},
@@ -392,6 +311,24 @@
           "when": "view == codingTools.history && viewItem == codingToolsHistoryEntry",
           "group": "navigation@2"
         }
+      ],
+      "commandPalette": [
+        {
+          "command": "codingTools.copy1",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.paste1",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.copy2",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.paste2",
+          "when": "false"
+        }
       ]
     },
     "viewsWelcome": [
@@ -402,7 +339,7 @@
     ]
   },
   "scripts": {
-    "test": "node test/run-tests.js && node test/placement-tests.js && node test/confirmation-tests.js && node test/history-tests.js && node test/v06-tests.js && node test/v07-tests.js && node test/native-shortcuts-tests.js && node test/cross-navigation-tests.js && node test/jump-cycle-tests.js && node test/safe-placement-tests.js && node test/gif-guide-tests.js"
+    "test": "node test/run-tests.js && node test/placement-tests.js && node test/confirmation-tests.js && node test/history-tests.js && node test/v06-tests.js && node test/v07-tests.js && node test/native-shortcuts-tests.js && node test/cross-navigation-tests.js && node test/jump-cycle-tests.js && node test/safe-placement-tests.js && node test/gif-guide-tests.js && node test/paste-context-tests.js"
   },
   "activationEvents": [
     "onView:codingTools.history",

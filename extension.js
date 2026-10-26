@@ -13,12 +13,14 @@ const { startSaveHistory } = require('./save-history');
 const { registerGitPushHistory } = require('./git-push-history');
 const settings = require('./settings');
 const jump = require('./cross-navigation');
+const isMac = require('node:os').platform() === 'darwin';
+const { cssPasteContext } = require('./paste-context');
 
 let historyUI = null;
-let activeContext = null;
 let jumpSession = null;
 let jumpStatusItem = null;
 let visualGuidePanel = null;
+let slotStatusItems = [];
 
 function clearJumpSession() {
   jumpSession = null;
@@ -80,6 +82,7 @@ function preserveJumpOnSelectionChange(event) {
 const SLOT_COUNT = 2;
 const SLOT_PREFIX = 'coding-tools.slot.';
 const CLASS_SLOT_PREFIX = 'coding-tools.class-slot.';
+const CONTEXT_SLOT_PREFIX = 'coding-tools.slot-context.';
 const LAST_CLASS_KEY = 'coding-tools.lastClassClipboard';
 const LAST_CONTEXT_KEY = 'coding-tools.lastClassContext';
 const CSS_LANGUAGES = new Set(['css', 'scss', 'less']);
@@ -110,24 +113,6 @@ async function loggedEdit(context, editor, action, operation) {
   return result;
 }
 
-async function nativePaste(context, editor, action='通常の貼り付け') {
-  return loggedEdit(context, editor, action, () =>
-    vscode.commands.executeCommand('editor.action.clipboardPasteAction'));
-}
-
-// Enter in the arrow-key confirmation screen chooses a plan, not yet the edit.
-// The final modal makes the pending operation explicit before changing CSS.
-async function confirmExecution(choice) {
-  if (!choice) return;
-  if(activeContext && !settings.enabled(activeContext,'confirm')) return choice.run();
-  const response = await vscode.window.showInformationMessage(
-    `この操作を実行しますか？：${choice.label}`,
-    { modal: true, detail: `${choice.description || ''}\n実行後の編集は、エディタで Ctrl+Z（Macは ⌘Z）で取り消せます。` },
-    '実行する'
-  );
-  if (response === '実行する') return choice.run();
-}
-
 function activeEditor() {
   const editor = vscode.window.activeTextEditor;
   if (!editor) vscode.window.showWarningMessage('Coding Tools: テキストエディタを開いてください。');
@@ -140,10 +125,15 @@ function getClasses(document) {
   return [];
 }
 
-// Returns a class only when the current selection is *exactly one class token*.
+// Copy a class under the caret or an exactly selected class token.
 // An ordinary CSS block, class attribute, or arbitrary word is copied normally.
 function selectedClassName(editor) {
-  if (editor.selections.length !== 1 || editor.selection.isEmpty) return null;
+  if (editor.selections.length !== 1) return null;
+  if (editor.selection.isEmpty) {
+    const offset = editor.document.offsetAt(editor.selection.active);
+    const item = getClasses(editor.document).find(item => item.start <= offset && offset < item.end);
+    return item ? item.name : null;
+  }
   const document = editor.document;
   const { anchor, active } = editor.selection;
   const a = document.offsetAt(anchor);
@@ -195,7 +185,7 @@ async function copyToSlot(context, n) {
   if (!editor) return;
   const selection = editor.selection;
   const className = selectedClassName(editor);
-  // No selection: preserve the previous behavior of copying the whole line.
+  // Outside a class, an empty selection still copies the whole line.
   const text = className !== null ? className : selection.isEmpty
     ? editor.document.lineAt(selection.active.line).text + (editor.document.eol === vscode.EndOfLine.CRLF ? '\r\n' : '\n')
     : editor.document.getText(selection);
@@ -205,6 +195,8 @@ async function copyToSlot(context, n) {
   }
   await context.globalState.update(`${SLOT_PREFIX}${n}`, text);
   await context.globalState.update(`${CLASS_SLOT_PREFIX}${n}`, className !== null);
+  await context.globalState.update(`${CONTEXT_SLOT_PREFIX}${n}`, className !== null ? classContextFromEditor(editor, className) : null);
+  refreshSlotStatus(context);
   if (className !== null) await copyPlainClass(context, className, editor);
   else {
     await vscode.env.clipboard.writeText(text);
@@ -219,8 +211,9 @@ async function copyToSlot(context, n) {
 // only the text just before the range is examined.
 function classTextForSelection(document, selection, name) {
   const at = Math.min(document.offsetAt(selection.anchor), document.offsetAt(selection.active));
-  const before = document.getText().charAt(at - 1);
-  return before === '.' ? name : `.${name}`;
+  const text = document.getText();
+  if (cssPasteContext(text, at) === 'plain') return name;
+  return text.charAt(at - 1) === '.' ? name : `.${name}`;
 }
 
 async function insertIntoEditor(editor, text, isClass) {
@@ -243,27 +236,64 @@ async function pasteFromSlot(context, n) {
     vscode.window.showInformationMessage(`Coding Tools: 保存枠${n}は空です。先に「コピー ${n}」を実行してください。`);
     return;
   }
+  if (isClassSlot(context, n) && editor.document.languageId === 'css' &&
+      editor.selections.length === 1 && editor.selection.isEmpty &&
+      cssPasteContext(editor.document.getText(), editor.document.offsetAt(editor.selection.active)) === 'structure') {
+    return routeCssPaste(context, editor, text, context.globalState.get(`${CONTEXT_SLOT_PREFIX}${n}`));
+  }
   const success = await loggedEdit(context, editor, `保存枠${n}の貼り付け`, () => insertIntoEditor(editor, text, isClassSlot(context, n)));
   if (!success) vscode.window.showWarningMessage('Coding Tools: 貼り付けできませんでした（読み取り専用など）。');
   else notify(`${n}を貼り付けました`);
 }
 
-async function pickSlot(context, action) {
-  const items = Array.from({ length: SLOT_COUNT }, (_, i) => {
-    const n = i + 1;
-    const value = readSlot(context, n);
-    const preview = value === undefined ? '未保存' : value.replace(/[\r\n\t]+/g, ' ↵ ').slice(0, 65);
-    return { label: `${n}：${preview}`, description: value === undefined ? '空' : `${value.length}文字${isClassSlot(context,n) ? '・クラス' : ''}`, n };
-  });
-  const choice = await vscode.window.showQuickPick(items, {
-    placeHolder: action === 'copy' ? 'コピー先の番号を選択（1〜2）' : '貼り付ける番号を選択（1〜2）',
-  });
-  if (!choice) return;
-  if (action === 'copy') await copyToSlot(context, choice.n);
-  else await pasteFromSlot(context, choice.n);
+function slotPreview(value, limit = 22) {
+  if (value === undefined) return '空';
+  const text = value.replace(/\s+/g, ' ').trim();
+  const chars = Array.from(text || '（空白）');
+  return chars.slice(0, limit).join('') + (chars.length > limit ? '…' : '');
 }
 
-function moveClass(direction, expand = false) {
+function refreshSlotStatus(context) {
+  slotStatusItems.forEach((items, i) => {
+    const n = i + 1;
+    const value = readSlot(context, n);
+    // Clipboard text must not turn into status-bar icons.
+    const preview = slotPreview(value).replace(/\$\(/g, '＄(');
+    const shown = part => settings.enabled(context, settings.slotDisplayKey(n, part));
+    const prefix = isMac ? 'Cmd+Alt+' : 'Ctrl+Alt+';
+    const copyKey = prefix + 'Shift+' + n;
+    const pasteKey = prefix + n;
+    const actionText = (label, key) => [shown('actions') ? label : '', shown('shortcuts') ? `(${key})` : ''].filter(Boolean).join(' ');
+    const update = (item, text, tooltip, label) => {
+      item.text = text;
+      item.tooltip = tooltip;
+      item.accessibilityInformation = { label };
+      if (text) item.show(); else item.hide();
+    };
+    const help = `コピー枠${n} — ${value === undefined ? '未保存' : slotPreview(value, 200)}`;
+    update(items.number, shown('number') ? `(${n})` : '', `${help}\nクリックしてコピー／貼り付け`, `コピー枠${n}の操作を選択`);
+    update(items.copy, actionText('コピー', copyKey), `コピー枠${n}へコピー\n初期キー: ${copyKey}（変更した場合は変更後のキー）`, `コピー枠${n}へコピー`);
+    update(items.paste, actionText('貼り付け', pasteKey), `${help}\n初期キー: ${pasteKey}（変更した場合は変更後のキー）`, `コピー枠${n}から貼り付け`);
+    update(items.content, shown('content') ? `/ ${preview}` : '', `${help}\nクリックしてコピー／貼り付け`, `コピー枠${n}の保存内容: ${slotPreview(value)}`);
+  });
+}
+
+async function showSlotActions(context, n) {
+  const editor = activeEditor();
+  if (!editor) return;
+  const items = [{ label: '$(copy) この枠にコピー', action: 'copy', description: '選択した文字、またはカーソル上のクラス名' }];
+  if (readSlot(context, n) !== undefined) {
+    items.push({ label: '$(paste) この枠から貼り付け', action: 'paste', description: slotPreview(readSlot(context, n), 65) });
+  }
+  const choice = await vscode.window.showQuickPick(items, {
+    title: `コピー枠${n}`, placeHolder: 'コピーまたは貼り付けを選択',
+  });
+  if (!choice || vscode.window.activeTextEditor !== editor || editor.document.isClosed) return;
+  if (choice.action === 'copy') await copyToSlot(context, n);
+  else if (choice.action === 'paste') await pasteFromSlot(context, n);
+}
+
+function moveClass(direction) {
   clearJumpSession();
   const editor = activeEditor();
   if (!editor) return;
@@ -277,56 +307,16 @@ function moveClass(direction, expand = false) {
     vscode.window.showInformationMessage('Coding Tools: 移動できるクラスが見つかりません。');
     return;
   }
-  // When a token is selected, moving back must skip that token instead of
-  // selecting it again. For multi-selection, move from the most recent token.
-  const current = expand && editor.selections.length > 1
-    ? editor.selections[editor.selections.length - 1]
-    : editor.selection;
+  // When a token is selected, moving back must skip that token.
+  const current = editor.selection;
   const cursor = editor.document.offsetAt(current.isEmpty ? current.active : current.start);
   const item = nextClass(positions, cursor, direction);
   const begin = editor.document.positionAt(item.start);
   const finish = editor.document.positionAt(item.end);
   const newSelection = new vscode.Selection(begin, finish);
-  if (expand) {
-    const exists = editor.selections.some(sel =>
-      editor.document.offsetAt(sel.start) === item.start && editor.document.offsetAt(sel.end) === item.end);
-    if (!exists) editor.selections = [...editor.selections, newSelection];
-    else notify(`「${item.name}」は既に選択されています`);
-  } else {
-    editor.selection = newSelection;
-  }
+  editor.selection = newSelection;
   editor.revealRange(new vscode.Range(begin, finish), vscode.TextEditorRevealType.InCenterIfOutsideViewport);
-  notify(`${CSS_LANGUAGES.has(languageId) ? '.' : ''}${item.name} を${expand ? '追加' : ''}選択`);
-}
-
-async function copyClassName(context) {
-  const editor = activeEditor();
-  if (!editor) return;
-  const doc = editor.document;
-  const offset = doc.offsetAt(editor.selection.active);
-  const css = CSS_LANGUAGES.has(doc.languageId);
-  const match = getClasses(doc).find((item) => item.start <= offset && (css ? offset <= item.end : offset < item.end)) || getClasses(doc).find(item => item.start === doc.offsetAt(editor.selection.start));
-  if (!match) {
-    vscode.window.showInformationMessage('Coding Tools: CSSの .class またはHTMLの class="..." 内にカーソルを置いてください。');
-    return;
-  }
-  await copyPlainClass(context, match.name, editor);
-  notify(`クラス名「${match.name}」をコピー（検索はドットなし・CSS貼り付けはドット付き）`);
-}
-
-// Optional command (unbound by default). Never intercept native Ctrl/Cmd+C.
-// Non-class selections delegate to the built-in copy command.
-async function smartCopy(context) {
-  const editor = activeEditor();
-  if (!editor) return;
-  const name = selectedClassName(editor);
-  if (name === null) {
-    await context.globalState.update(LAST_CLASS_KEY, null);
-    await context.globalState.update(LAST_CONTEXT_KEY, null);
-    return vscode.commands.executeCommand('editor.action.clipboardCopyAction');
-  }
-  await copyPlainClass(context, name, editor);
-  notify(`「${name}」をコピー（ドットなし）`);
+  notify(`${CSS_LANGUAGES.has(languageId) ? '.' : ''}${item.name} を選択`);
 }
 
 // CSS editing is scoped by the location of the cursor. Never silently rewrite
@@ -340,23 +330,6 @@ function scopeChoiceFromSettings(editor, selector, tree) {
   if(configured==='base') return tree.root;
   const match=placement.atRules(tree,'media').filter(n=>n.prelude.trim()===configured.trim());
   return match.length===1 ? match[0] : null;
-}
-
-function cssCursorInlinePaste(editor) {
-  const text=editor.document.getText();
-  const offset=editor.document.offsetAt(editor.selection.active);
-  const fragment=text.slice(Math.max(0,text.lastIndexOf('\n',offset-1)+1),offset);
-  // If a selector is being typed, inserting a whole new block elsewhere would
-  // be surprising. Inline smart paste maintains the v0.3 dot behavior.
-  if (fragment.trim() && !fragment.includes('}') && !fragment.includes('{')) return true;
-  return cssCursorInsideRule(editor);
-}
-
-function cssCursorInsideRule(editor) {
-  const offset=editor.document.offsetAt(editor.selection.active);
-  const tree=placement.parseCss(editor.document.getText());
-  if(tree.invalid)return false;
-  return placement.rules(tree).some(n=>n.brace<offset && offset<n.end-1);
 }
 
 async function jumpTo(editor, rule) {
@@ -393,8 +366,8 @@ async function insertAt(context, editor, selector, insertion) {
   }
   // Opening the preview may have taken time; abort instead of inserting at a
   // stale position if any editor/extension changed the file in the meantime.
-  if(editor.document.version!==version || editor.document.getText()!==original){
-    vscode.window.showWarningMessage('Coding Tools: Diff確認中にCSSが変更されたため、自動配置を中止しました。');
+  if(editor.document.isClosed || editor.document.version!==version || editor.document.getText()!==original){
+    vscode.window.showWarningMessage('Coding Tools: Diff確認中にCSSが変更または閉じられたため、自動配置を中止しました。');
     return false;
   }
   const change=new vscode.WorkspaceEdit();
@@ -412,129 +385,60 @@ async function insertAt(context, editor, selector, insertion) {
 
 function option(label,description,run,detail) {return {label:label.replace(/^\$\([\w-]+\)\s*/, ''),description,detail,run};}
 
-async function chooseStylesheet(sourceEditor) {
-  if(CSS_LANGUAGES.has(sourceEditor.document.languageId))return sourceEditor;
-  if(!vscode.workspace?.findFiles) { vscode.window.showInformationMessage('Coding Tools: CSSファイルを開いてください。');return null; }
-  const uris=await vscode.workspace.findFiles('**/*.{css,scss,less}','**/{node_modules,dist,build,.git}/**',100);
-  if(!uris.length) {vscode.window.showInformationMessage('Coding Tools: ワークスペースにCSSファイルがありません。');return null;}
-  const configured=vscode.workspace.getConfiguration('codingTools',sourceEditor.document.uri).get('preferredStylesheet','');
-  const selected=configured?uris.filter(uri=>uri.path.endsWith('/'+configured.replaceAll('\\','/'))):[];
-  let uri=selected.length===1?selected[0]:uris.length===1?uris[0]:null;
-  if(!uri) {
-    const picked=await vscode.window.showQuickPick(uris.map(u=>({label:path.basename(u.path),description:u.path,uri:u})),{placeHolder:'CSSを書き込むファイルを選択（自動では決められません）'});
-    if(!picked)return null; uri=picked.uri;
-  }
-  const doc=await vscode.workspace.openTextDocument(uri);
-  return vscode.window.showTextDocument(doc,{preview:false});
-}
-
-// The explicit route command works even while focused in an HTML editor.
-// It offers normal paste and safe routing as separate actions.
-async function routeCss(context,{showMenu=false,forceRoute=false,fallbackPlain=false,sourceEditor=null,sourceText=null,knownClass=null}={}) {
-  const origin=sourceEditor||activeEditor();if(!origin)return;
-  const copied=sourceText==null?await vscode.env.clipboard.readText():sourceText;
-  const saved=knownClass==null?context.globalState.get(LAST_CLASS_KEY):knownClass;
-  const isKnown=typeof saved==='string' && copied===saved;
-  const selector=placement.selectorFromClipboard(copied,isKnown?saved:null);
-  if(!selector) {
-    // Never interpret HTML text, font settings, a multiline block, or arbitrary
-    // clipboard content as a selector.
-    if(showMenu || fallbackPlain) return nativePaste(context, origin, '通常の貼り付け');
-    vscode.window.showInformationMessage('CSSセレクタではありません。通常の文字列には Ctrl+V を使ってください。');
+async function routeCssPaste(context, editor, name, copiedContext) {
+  const selector = '.' + name;
+  if (!placement.isSafeSelector(selector)) {
+    vscode.window.showWarningMessage('Coding Tools: このクラス名を安全に配置できません。');
     return;
   }
-  if(!showMenu && !forceRoute && CSS_LANGUAGES.has(origin.document.languageId) && (cssCursorInlinePaste(origin)||origin.selection.isEmpty===false)) {
-    // Inline replacement is intentionally distinct from structural insertion.
-    return loggedEdit(context, origin, 'CSSクラス貼り付け', () => insertIntoEditor(origin,copied,isKnown));
+  const text = editor.document.getText();
+  const version = editor.document.version;
+  const neighbors = copiedContext?.name === name ? copiedContext : {};
+  const offset = editor.document.offsetAt(editor.selection.active);
+  const plan = placement.candidates(text, selector, { offset, neighbors });
+  if (!plan.safe) { vscode.window.showWarningMessage(plan.reason); return; }
+  const configured = scopeChoiceFromSettings(editor, selector, plan.tree);
+  const preferred = configured || plan.current;
+  const items = [];
+  for (const rule of plan.allExact) {
+    const line = editor.document.positionAt(rule.start).line + 1;
+    items.push({ ...option('既存ルールへ移動：' + placement.scopeLabel(rule),
+      `L${line} / ${rule.prelude}（CSSは変更しない）`, () => jumpTo(editor, rule)), scope: placement.scopeKey(rule), kind: 'jump' });
   }
-  // With the options command, let the user choose regular paste before editing another file.
-  if(showMenu) {
-    const pick=await showConfirmation(vscode,{title:'貼り付け方法',subtitle:`${selector}：処理を選んで確定`,items:[
-      {label:'通常の貼り付け',description:'HTMLの文字・フォント指定・CSSの値など（現在位置）',kind:'plain'},
-      {label:'CSSへ整理して追加 / 既存へ移動',description:`${selector} の関連ルール・メディアクエリを調べる`,kind:'css'}
-    ],defaultIndex:0});
-    if(!pick)return;
-    if(pick.kind==='plain')return confirmExecution({...pick,run:()=>nativePaste(context,origin,'通常の貼り付け')});
+  const rootPlan = placement.candidates(text, selector, { offset: 0, neighbors });
+  const rootRelated = rootPlan.anchor?.container.type === 'root' &&
+    !placement.flatten(plan.tree).some(node => node.brace < rootPlan.anchor.offset && rootPlan.anchor.offset < node.end - 1);
+  const rootAnchor = rootRelated ? rootPlan.anchor : {offset:text.length,container:plan.tree.root};
+  items.push({ ...option('空ルールを追加：基本ルール',
+    rootRelated && rootPlan.reason ? rootPlan.reason : '@mediaなどの外側に追加',
+    () => insertAt(context, editor, selector, placement.formatInsert(text, selector, rootAnchor))), scope:'', kind:'insert' });
+  for (const at of placement.flatten(plan.tree)) {
+    if (at.type !== 'at' || at.end === null || !/^@(media|supports|container|layer)\b/.test(at.prelude)) continue;
+    let parent = at.parent;
+    let eligible = true;
+    while (parent?.type !== 'root') {
+      if (!parent || parent.type === 'rule' || !/^@(media|supports|container|layer)\b/.test(parent.prelude)) { eligible = false; break; }
+      parent = parent.parent;
+    }
+    if (!eligible) continue;
+    const line = editor.document.positionAt(at.start).line + 1;
+    items.push({ ...option('空ルールを追加：' + placement.scopeLabel(at),
+      `L${line} / 記述済みの条件内へ追加`,
+      () => insertAt(context, editor, selector, placement.formatInsert(text, selector, {offset:at.end-1,container:at}))),
+      scope:placement.scopeKey(at), kind:'insert' });
   }
-  const editor=await chooseStylesheet(origin);if(!editor)return;
-  if(!placement.isSafeSelector(selector)){vscode.window.showWarningMessage('このセレクタは自動配置に対応していません。');return;}
-  const text=editor.document.getText();
-  const htmlCtx=context.globalState.get(LAST_CONTEXT_KEY);
-  const neighbors=isKnown && htmlCtx?.name===saved ? htmlCtx : {};
-  let offset=editor.document.offsetAt(editor.selection.active);
-  let plan=placement.candidates(text,selector,{offset,neighbors});
-  if(!plan.safe){vscode.window.showWarningMessage(plan.reason);return;}
-  const configured=scopeChoiceFromSettings(editor,selector,plan.tree);
-  if(configured){
-    const where=configured.type==='root'?0:configured.brace+1;
-    plan=placement.candidates(text,selector,{offset:where,neighbors});
+  const preferredScope = placement.scopeKey(preferred);
+  const preferredJump = items.findIndex(item => item.kind === 'jump' && item.scope === preferredScope);
+  const preferredInsert = items.findIndex(item => item.kind === 'insert' && item.scope === preferredScope);
+  const defaultIndex = preferredJump >= 0 ? preferredJump : preferredInsert >= 0 ? preferredInsert : 0;
+  const pick = await showConfirmation(vscode, {title:'CSS貼り付け',
+    subtitle:`${path.basename(editor.document.uri.fsPath || editor.document.uri.path || 'CSS')}：${selector} の移動先／追加先を選択`, items, defaultIndex});
+  if (!pick) return;
+  if (editor.document.isClosed || editor.document.version !== version || editor.document.getText() !== text) {
+    vscode.window.showWarningMessage('Coding Tools: 候補を選んでいる間にCSSが変更されたため中止しました。');
+    return;
   }
-  // When a rule already exists, the user may intend a separate @media override.
-  // Therefore present explicit choices rather than silently jumping to the base rule.
-  const base=placement.baseClass(selector)||'';
-  const family=base.includes('__') ? base.split('__')[0] : base.split('--')[0];
-  const sameFamilyElsewhere=!!family && placement.rules(plan.tree).some(r=>
-    placement.scopeKey(r)!==placement.scopeKey(plan.current) &&
-    [...r.prelude.matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)].some(m=>m[1]===family || m[1].startsWith(family+'__') || m[1].startsWith(family+'--')));
-  if(plan.preferred==='insert' && plan.allExact.length===0 && !sameFamilyElsewhere) {
-    return insertAt(context,editor,selector,placement.formatInsert(text,selector,plan.anchor));
-  }
-  const items=[];
-  // Existing matches always before newly-created variants.
-  for(const rule of plan.allExact){
-    const line=editor.document.positionAt(rule.start).line+1;
-    items.push(option('$(go-to-file) 既存へ移動：'+placement.scopeLabel(rule),`L${line} / ${rule.prelude} （CSSは変更しない）`,()=>jumpTo(editor,rule),'同名のルールを新しく作らず、既存の場所へ移動'));
-  }
-  if(plan.anchor && plan.related.length>0 && plan.allExact.length===0) {
-    const insert=placement.formatInsert(text,selector,plan.anchor);
-    items.push(option('$(add) 推奨位置へ追加：'+placement.scopeLabel(plan.current),plan.reason||'関連するセレクタの近く',()=>insertAt(context,editor,selector,insert),'周囲のルールは移動せず、新規ルールだけ挿入'));
-  }
-  // Base scope at the end is always available as a fallback, not an automatic decision.
-  items.push(option('$(add) 基本ルールの末尾に追加','@media / @layer の外側（新しいルール）',()=>insertAt(context,editor,selector,placement.formatInsert(text,selector,{offset:text.length,container:plan.tree.root}))));
-  items.push(option('$(filter) 既存の条件内に追加 / 新しい @media を作成',
-    '@media・@supports・@container・@layer を場所と理由で選択',async()=>{
-      const scoped=placement.flatten(plan.tree).filter(n=>n.type==='at' && n.end!==null && /^@(media|supports|container|layer)\b/.test(n.prelude));
-      const inner=[];
-      for(const at of scoped){
-        if(at.parent?.type==='rule')continue;
-        const line=editor.document.positionAt(at.start).line+1;
-        inner.push(option('$(symbol-color) '+placement.scopeLabel(at),
-          `L${line} / 条件内に新規追加（既存の条件を変更・統合しない）`,
-          ()=>insertAt(context,editor,selector,placement.formatInsert(text,selector,{offset:at.end-1,container:at}))));
-      }
-      inner.push(option('$(add) 新規 @media を作成',
-        '@media (min-width: 768px) などを入力して追加',async()=>{
-          const value=await vscode.window.showInputBox({
-            prompt:'作成するメディアクエリ（@media ...）',value:'@media (min-width: 768px)',
-            validateInput:v=>/^@media\s+[^{};\r\n]+$/.test(v.trim())?null:'@media (条件) を入力してください'});
-          if(!value)return;
-          const result=placement.wrapNewMedia(text,selector,value);
-          if(result)await insertAt(context,editor,selector,result);
-        }));
-      const choice=await showConfirmation(vscode,{
-        title:'条件付きCSSの追加先',subtitle:`${selector} の配置先を選択`,items:inner,defaultIndex:0});
-      if(choice)await choice.run();
-    }));
-  // Extra selectors are genuinely useful; allow precise custom selectors, including +, ~, nth-child.
-  if(/^\.[\w-]+$/.test(selector))items.push(option('$(symbol-method) 関係・位置・状態のセレクタを指定','例：'+selector+' + '+selector+'、'+selector+':nth-child(3)',async()=>{
-    const custom=await vscode.window.showInputBox({prompt:'追加するセレクタ（+、~、:nth-child、:hover など）',value:selector+' + '+selector,
-      validateInput:v=>placement.isSafeSelector(v)?null:'CSSセレクタを1行で指定してください'});
-    if(!custom)return;
-    return routeCss(context,{showMenu:false,forceRoute:true,sourceEditor:editor,sourceText:custom,knownClass:''});
-  }));
-  items.push(option('$(paste) 通常の貼り付け（カーソル位置）','CSSの挿入位置を変更せず、従来の貼り付けを行う',()=>nativePaste(context,editor,'通常の貼り付け')));
-  const pick=await showConfirmation(vscode,{title:'CSSの追加先を確認',subtitle:`${selector} の前後関係と条件から候補を表示`,items,defaultIndex:0});
-  if(pick) await pick.run();
-}
-
-// Optional smart-paste command (unbound by default). Native Ctrl/Cmd+V is untouched.
-async function smartPaste(context) {
-  const editor=activeEditor();if(!editor)return;
-  const copied=context.globalState.get(LAST_CLASS_KEY);
-  const clipboard=await vscode.env.clipboard.readText();
-  if(typeof copied!=='string'||!copied||copied!==clipboard)
-    return nativePaste(context, editor);
-  return routeCss(context,{sourceEditor:editor,sourceText:clipboard,knownClass:copied,fallbackPlain:true});
+  return pick.run();
 }
 
 // Jump directly from a selected class (or class under caret) into the editor.
@@ -554,8 +458,8 @@ async function crossJump(destination) {
     return;
   }
   const text = srcDoc.getText();
-  // The existing extend-class commands may create several selections. Search
-  // all exact selected class tokens; the primary one wins ties in ranking.
+  // Native multi-cursor selections may contain several classes.
+  // Search all exact selected class tokens; the primary one wins ties.
   const selected = [];
   for (const selection of editor.selections) {
     const start = srcDoc.offsetAt(selection.start);
@@ -613,7 +517,7 @@ async function crossJump(destination) {
 }
 
 function activate(context) {
-  activeContext=context;
+  slotStatusItems = [];
   safePreview.register(vscode,context);
   jumpStatusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right,80);
   jumpStatusItem.command='codingTools.cycleNextJump';
@@ -631,7 +535,7 @@ function activate(context) {
   settings.registerSettingsUI(vscode,context,async()=>{
     await history.prune(context);
     historyUI?.refresh();
-  });
+  }, () => refreshSlotStatus(context));
   historyUI = makeHistoryUI(vscode, context);
   startSaveHistory(vscode, context, () => historyUI?.refresh());
   registerGitPushHistory(vscode, context, () => historyUI?.refresh());
@@ -643,28 +547,32 @@ function activate(context) {
   cleanupTimer.unref?.();
   context.subscriptions.push({dispose:()=>clearInterval(cleanupTimer)});
   for (let n = 1; n <= SLOT_COUNT; n++) {
+    const items = {};
+    for (const [index, part] of ['number', 'copy', 'paste', 'content'].entries()) {
+      const id = part === 'number' ? `codingTools.slot${n}` : `codingTools.slot${n}.${part}`;
+      const item = vscode.window.createStatusBarItem(id, vscode.StatusBarAlignment.Right, 99 - (n - 1) * 4 - index);
+      const labels = {number:'番号',copy:'コピー',paste:'貼り付け',content:'保存内容'};
+      item.name = `Coding Tools コピー枠${n} ${labels[part]}`;
+      item.command = part === 'copy' || part === 'paste' ? `codingTools.${part}${n}` : `codingTools.showSlot${n}`;
+      items[part] = item;
+      context.subscriptions.push(item);
+    }
+    slotStatusItems.push(items);
     context.subscriptions.push(
+      vscode.commands.registerCommand(`codingTools.showSlot${n}`, () => showSlotActions(context, n)),
       vscode.commands.registerCommand(`codingTools.copy${n}`, () => copyToSlot(context, n)),
       vscode.commands.registerCommand(`codingTools.paste${n}`, () => pasteFromSlot(context, n)),
     );
   }
+  refreshSlotStatus(context);
   context.subscriptions.push(
     vscode.commands.registerCommand('codingTools.jumpToCss', () => crossJump('css')),
     vscode.commands.registerCommand('codingTools.jumpToHtml', () => crossJump('html')),
     vscode.commands.registerCommand('codingTools.cycleNextJump', () => cycleJump(1)),
     vscode.commands.registerCommand('codingTools.cyclePreviousJump', () => cycleJump(-1)),
     vscode.commands.registerCommand('codingTools.endJumpCycle', clearJumpSession),
-    vscode.commands.registerCommand('codingTools.chooseCopySlot', () => pickSlot(context, 'copy')),
-    vscode.commands.registerCommand('codingTools.choosePasteSlot', () => pickSlot(context, 'paste')),
     vscode.commands.registerCommand('codingTools.nextClass', () => moveClass(1)),
     vscode.commands.registerCommand('codingTools.previousClass', () => moveClass(-1)),
-    vscode.commands.registerCommand('codingTools.extendNextClass', () => moveClass(1, true)),
-    vscode.commands.registerCommand('codingTools.extendPreviousClass', () => moveClass(-1, true)),
-    vscode.commands.registerCommand('codingTools.copyClassName', () => copyClassName(context)),
-    vscode.commands.registerCommand('codingTools.smartCopy', () => smartCopy(context)),
-    vscode.commands.registerCommand('codingTools.smartPaste', () => smartPaste(context)),
-    vscode.commands.registerCommand('codingTools.placeCss', () => routeCss(context,{forceRoute:true})),
-    vscode.commands.registerCommand('codingTools.pasteOptions', () => routeCss(context,{showMenu:true})),
     vscode.commands.registerCommand('codingTools.openVisualGuide', async()=>{
       if(visualGuidePanel){visualGuidePanel.reveal(vscode.ViewColumn.One);return;}
       const fs=require('node:fs/promises');

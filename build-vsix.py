@@ -56,7 +56,7 @@ ET.fromstring(content_types)
 with ZipFile(dest, 'w', compression=ZIP_DEFLATED) as archive:
     archive.writestr('extension.vsixmanifest', manifest)
     archive.writestr('[Content_Types].xml', content_types)
-    for name in ['package.json', 'extension.js', 'selectors.js', 'cross-navigation.js', 'placement.js', 'safe-placement.js', 'safe-preview.js', 'confirmation.js', 'history.js', 'history-view.js', 'settings.js', 'save-history.js', 'git-push-history.js', 'README.md', 'LICENSE']:
+    for name in ['package.json', 'extension.js', 'paste-context.js', 'selectors.js', 'cross-navigation.js', 'placement.js', 'safe-placement.js', 'safe-preview.js', 'confirmation.js', 'history.js', 'history-view.js', 'settings.js', 'save-history.js', 'git-push-history.js', 'README.md', 'LICENSE']:
         archive.write(root / name, f'extension/{name}')
     archive.write(root / metadata['icon'], f"extension/{metadata['icon']}")
     for runtime in sorted((root / 'vendor' / 'postcss').rglob('*')):

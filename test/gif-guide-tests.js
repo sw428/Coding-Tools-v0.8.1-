@@ -7,6 +7,19 @@ const root = path.resolve(__dirname,'..');
 const pkg = require('../package.json');
 const manifest = require('../tools/gif-guide-manifest.json');
 const guide = fs.readFileSync(path.join(root,'docs/visual-guide.html'),'utf8');
+const readme = fs.readFileSync(path.join(root,'README.md'),'utf8');
+assert.match(manifest.readmeImageBaseUrl, /^https:\/\/raw\.githubusercontent\.com\/sw428\/coding-tools-gifs\/[a-f0-9]{40}\/$/);
+assert.equal([...readme.matchAll(/!\[操作GIF：/g)].length, manifest.demos.filter(d=>d.readmeImage!==false).length);
+assert.ok(!/!\[[^\]]*\]\((?!https:)[^)]+\)/.test(readme), 'Details images must use HTTPS URLs');
+for (const demo of manifest.demos) {
+ if(demo.readmeImage!==false)assert.ok(readme.includes(']('+manifest.readmeImageBaseUrl+demo.id+'-'+demo.slug+'.gif)\n\n'+demo.description), 'Missing HTTPS GIF and caption: '+demo.id);
+ else assert.ok(readme.includes(demo.description),'Missing description: '+demo.id);
+}
+assert.equal([...readme.matchAll(/^#### \d{2} .+（.+）$/gm)].length, manifest.demos.length, 'Each Details heading must include its key or action');
+for (const file of ['README.md','docs/GIF_GUIDE.md','docs/visual-guide.html','docs/media/gif/index.html']) {
+ assert.ok(!/仮想画面|実機録画/.test(fs.readFileSync(path.join(root,file),'utf8')), 'Removed labels remain: '+file);
+}
+assert.ok(!guide.includes('class="keys"'), 'Duplicate key rows must not appear below operation headings');
 const covered = new Set(manifest.demos.flatMap(d=>d.commands));
 for(const {command} of pkg.contributes.commands) assert.ok(covered.has(command),'Missing demo: '+command);
 assert.equal(new Set(manifest.demos.map(d=>d.id)).size,manifest.demos.length);
@@ -34,14 +47,14 @@ const vscode={
   showWarningMessage:message=>{throw Error(message);}
  }
 };
-const mocks={vscode,'./safe-preview':{register(){}},'./settings':{registerSettingsUI(){}},
+const mocks={vscode,'./safe-preview':{register(){}},'./settings':{...require('../settings'),registerSettingsUI(){}},
  './history-view':{makeHistoryUI:()=>({refresh(){}})},'./save-history':{startSaveHistory(){}},
  './git-push-history':{registerGitPushHistory(){}},'./history':{prune:async()=>{}}};
 const sandbox={module:{exports:{}},require:id=>Object.hasOwn(mocks,id)?mocks[id]:require(id.startsWith('.')?path.join(root,id):id),
  setInterval:()=>({unref(){}}),clearInterval(){},TextDecoder};
 vm.runInNewContext(fs.readFileSync(path.join(root,'extension.js'),'utf8'),sandbox,{filename:'extension.js'});
 (async()=>{
- sandbox.module.exports.activate({extensionPath:root,subscriptions:[]});
+ sandbox.module.exports.activate({extensionPath:root,subscriptions:[],globalState:{get(){}}});
  await command();
  const html=panel.webview.html;
  const resources=[...html.matchAll(/(?:src|srcset|href)="(test-resource:[^"]+)"/g)];

@@ -10,6 +10,7 @@ function escapeHtml(value) {
 
 /**
  * A keyboard-controlled, *single-action* confirmation view.
+ * Tab/Shift+Tab: choose next/previous; Enter: execute selected action.
  * Up/Down: move focus; Right: turn focused action ON (turn others OFF);
  * Left: turn focused action OFF; Enter: run only the ON action; Escape: cancel.
  * No action runs while simply changing selection or focus.
@@ -46,10 +47,12 @@ function showConfirmation(vscode, { title, subtitle, items, defaultIndex = 0 }) 
   #help { margin-top:17px; font-size:13px; color:var(--vscode-descriptionForeground); }
   kbd { padding:1px 5px; border:1px solid var(--vscode-panel-border); border-radius:3px; font-family:inherit; }
   #status { margin-top:12px; min-height:22px; font-size:13px; }
+  button { margin-top:14px; padding:7px 12px; border:1px solid var(--vscode-button-border, transparent); color:var(--vscode-button-foreground); background:var(--vscode-button-background); cursor:pointer; }
 </style></head>
 <body tabindex="-1"><h2>${safeTitle}</h2><p>${safeSubtitle}</p>
 <ul id="choices" role="radiogroup" aria-label="確認項目">${rows}</ul>
-<div id="help"><kbd>↑</kbd><kbd>↓</kbd> 項目移動　<kbd>→</kbd> ON　<kbd>←</kbd> OFF　<kbd>Enter</kbd> 決定　<kbd>Esc</kbd> 中止</div>
+<div id="help"><kbd>Tab</kbd> 次を選択　<kbd>Shift+Tab</kbd> 前を選択　<kbd>Enter</kbd> 決定　<kbd>Esc</kbd> 中止</div>
+<button id="confirm" type="button">選択した操作を実行</button> <button id="cancel" type="button">キャンセル</button>
 <div id="status" role="status" aria-live="polite"></div>
 <script nonce="${nonce}">
   const vscode = acquireVsCodeApi();
@@ -70,7 +73,8 @@ function showConfirmation(vscode, { title, subtitle, items, defaultIndex = 0 }) 
       : 'ONの項目をEnterで確定します。';
   }
   function handleKey(event) {
-    if (event.key === 'ArrowDown') {focused = (focused+1)%rows.length; event.preventDefault();render();}
+    if (event.key === 'Tab') {focused = (focused + (event.shiftKey ? -1 : 1) + rows.length) % rows.length;selected = focused;event.preventDefault();render();}
+    else if (event.key === 'ArrowDown') {focused = (focused+1)%rows.length; event.preventDefault();render();}
     else if (event.key === 'ArrowUp') {focused = (focused-1+rows.length)%rows.length;event.preventDefault();render();}
     else if (event.key === 'ArrowRight') {selected = focused;event.preventDefault();render();}
     else if (event.key === 'ArrowLeft') {if (selected===focused) selected=-1;event.preventDefault();render();}
@@ -79,6 +83,8 @@ function showConfirmation(vscode, { title, subtitle, items, defaultIndex = 0 }) 
   }
   document.addEventListener('keydown',handleKey,true);
   rows.forEach((row,i)=>row.addEventListener('click',()=>{focused=i;selected=i;render();}));
+  document.getElementById('confirm').addEventListener('click',()=>{if(selected>=0)vscode.postMessage({type:'confirm',index:selected});});
+  document.getElementById('cancel').addEventListener('click',()=>vscode.postMessage({type:'cancel'}));
   document.body.focus();
   render();
 </script></body></html>`;

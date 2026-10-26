@@ -2,9 +2,13 @@
 
 **作者：Elliot Veyne**
 
-HTML/CSSのクラス選択、HTMLとCSSの移動、2枠のコピー・貼り付け、CSS追加、変更履歴の確認ができるVS Code拡張機能です。
+Coding Toolsは、**クラスに特化した、シームレスなコピー・貼り付け・移動**を目的としたVS Code拡張機能です。HTMLとCSSの行き来やクラス名の受け渡しをつなぎ、整理の手間を減らします。
 
-**v0.8.2 β（検証中）**：Windows / MacのVS Codeでの実機確認は未完了です。
+標準のコピー・貼り付けとは別に、2つのテキスト保存枠を使えます。専用のCSS貼り付けでは、コピー時に取得したクラス情報を手がかりに追加先を自動で探し、差分を確認して追加できます。
+
+コード・コピー内容・操作履歴を作者へ送信する機能はありません。変更履歴は利用者の環境に保存します。
+
+**v0.8.2 β（初期開発版）**
 
 ## 使う前に
 
@@ -16,329 +20,237 @@ HTML/CSSのクラス選択、HTMLとCSSの移動、2枠のコピー・貼り付�
 <!-- BEGIN EXTENSION GIF DETAILS -->
 ## GIFで使い方を見る
 
-拡張機能の「詳細」で、各GIFと1行説明をそのまま確認できます。全51本です。
+拡張機能の「詳細」で、各GIFと1行説明をそのまま確認できます。全31本です。
 
-操作説明用の仮想画面です。実機録画ではありません。
+下部の「Coding Tools」から設定全般を開けます。コピー枠1・2は「番号 → コピー → 貼り付け → 保存内容」の順に表示し、コピー／貼り付けを直接クリックできます。番号や保存内容をクリックすると操作を選べます。枠ごとに番号・操作名・初期キー・保存内容の表示をON/OFFでき、非表示でもキー操作は使えます。クラス名はドットなしで保存します。CSSの空行に貼ると、今のファイルで既存ルールへの移動・空ルール追加・記述済み条件内への追加を選べます。Tab／Shift+Tabで選択しEnterで決定できます。セレクタ入力ではドットを1つ付け、コメント・文字列・値や他言語には付けません。
 
 キーや詳しい手順は、コマンド「Coding Tools: GIFで使い方ガイドを開く（1操作ずつ）」から確認できます。
 
 ### クラス選択
 
-#### 01 次のクラス名を選ぶ
+#### 01 次のクラス名を選ぶ（Win: Ctrl + Alt + J / Mac: Cmd + Alt + J）
 
-![操作GIF：次のクラス名を選ぶ](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/01-next-class.gif)
+![操作GIF：次のクラス名を選ぶ](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/01-next-class.gif)
 
 キーを押すたびに、次のクラス名へ選択が移ります。
 
-#### 02 前のクラス名を選ぶ
+#### 02 前のクラス名を選ぶ（Win: Ctrl + Alt + K / Mac: Cmd + Alt + K）
 
-![操作GIF：前のクラス名を選ぶ](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/02-previous-class.gif)
+![操作GIF：前のクラス名を選ぶ](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/02-previous-class.gif)
 
 後ろから前へ、クラス名を1つずつ選べます。
 
-#### 03 次のクラスも追加選択する
-
-![操作GIF：次のクラスも追加選択する](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/03-extend-next-class.gif)
-
-元の選択を残し、次のクラス名を追加します。
-
-#### 04 前のクラスも追加選択する
-
-![操作GIF：前のクラスも追加選択する](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/04-extend-previous-class.gif)
-
-元の選択を残し、前のクラス名を追加します。
-
 ### コピー・貼り付け
 
-#### 05 保存枠1へコピーする
+#### 05 保存枠1へコピーする（Win: Ctrl + Alt + Shift + 1 / Mac: Cmd + Alt + Shift + 1）
 
-![操作GIF：保存枠1へコピーする](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/05-copy-slot1.gif)
+![操作GIF：保存枠1へコピーする](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/05-copy-slot1.gif)
 
-選んだ文字を保存枠1に覚えさせます。コピーだけではコードは変わりません。
+選択した文字やカーソル上のクラス名を枠1に保存します。クラス名はドットなしで保存します。
 
-#### 06 保存枠1から貼り付ける
+#### 06 保存枠1から貼り付ける（Win: Ctrl + Alt + 1 / Mac: Cmd + Alt + 1）
 
-![操作GIF：保存枠1から貼り付ける](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/06-paste-slot1.gif)
+![操作GIF：保存枠1から貼り付ける](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/06-paste-slot1.gif)
 
-保存枠1に覚えた内容を、今のカーソル位置へ貼り付けます。
+枠1の内容を貼り付けます。クラス名はCSSではドット付き、HTMLでは名前だけになります。
 
-#### 07 保存枠2へコピーする
+#### 07 保存枠2へコピーする（Win: Ctrl + Alt + Shift + 2 / Mac: Cmd + Alt + Shift + 2）
 
-![操作GIF：保存枠2へコピーする](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/07-copy-slot2.gif)
+![操作GIF：保存枠2へコピーする](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/07-copy-slot2.gif)
 
-選んだ文字を保存枠2に覚えさせます。コピーだけではコードは変わりません。
+選択した文字やカーソル上のクラス名を枠2に保存します。クラス名はドットなしで保存します。
 
-#### 08 保存枠2から貼り付ける
+#### 08 保存枠2から貼り付ける（Win: Ctrl + Alt + 2 / Mac: Cmd + Alt + 2）
 
-![操作GIF：保存枠2から貼り付ける](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/08-paste-slot2.gif)
+![操作GIF：保存枠2から貼り付ける](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/08-paste-slot2.gif)
 
-保存枠2に覚えた内容を、今のカーソル位置へ貼り付けます。
-
-#### 09 一覧でコピー先の枠を選ぶ
-
-![操作GIF：一覧でコピー先の枠を選ぶ](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/09-choose-copy-slot.gif)
-
-番号を覚えていなくても、一覧から保存枠を選べます。
-
-#### 10 一覧で貼り付け元の枠を選ぶ
-
-![操作GIF：一覧で貼り付け元の枠を選ぶ](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/10-choose-paste-slot.gif)
-
-保存してある文字を見ながら、使う枠を選べます。
-
-#### 11 カーソル上のクラス名をコピー
-
-![操作GIF：カーソル上のクラス名をコピー](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/11-copy-class-name.gif)
-
-クラス名の上にカーソルを置くだけで、その名前をコピーできます。
-
-#### 12 スマートコピーでドットを外す
-
-![操作GIF：スマートコピーでドットを外す](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/12-smart-copy.gif)
-
-クラス名全体を選んで実行すると、ドットなしの名前をコピーします。
-
-#### 13 スマート貼り付けでドットを付ける
-
-![操作GIF：スマート貼り付けでドットを付ける](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/13-smart-paste.gif)
-
-拡張機能でコピーしたクラスを、CSSの入力中の位置へ貼り付けます。
+枠2の内容を貼り付けます。クラス名はCSSではドット付き、HTMLでは名前だけになります。
 
 ### HTMLとCSSの移動
 
-#### 14 HTMLからCSS定義へ移動
+#### 14 HTMLからCSS定義へ移動（Win: Ctrl + Alt + 3 / Mac: Cmd + Alt + 3）
 
-![操作GIF：HTMLからCSS定義へ移動](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/14-html-to-css.gif)
+![操作GIF：HTMLからCSS定義へ移動](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/14-html-to-css.gif)
 
 HTMLのクラス名を選んで、対応するCSSの場所へ直接移動します。
 
-#### 15 CSSからHTMLの使用箇所へ移動
+#### 15 CSSからHTMLの使用箇所へ移動（Win: Ctrl + Alt + 4 / Mac: Cmd + Alt + 4）
 
-![操作GIF：CSSからHTMLの使用箇所へ移動](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/15-css-to-html.gif)
+![操作GIF：CSSからHTMLの使用箇所へ移動](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/15-css-to-html.gif)
 
 CSSのクラス名から、そのクラスを使っているHTMLへ移動します。
 
-#### 16 次のジャンプ候補へ移動
+#### 16 次のジャンプ候補へ移動（Tab）
 
-![操作GIF：次のジャンプ候補へ移動](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/16-next-jump-candidate.gif)
+![操作GIF：次のジャンプ候補へ移動](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/16-next-jump-candidate.gif)
 
 ジャンプ先が複数あるとき、Tabで次の候補へ移れます。
 
-#### 17 前のジャンプ候補へ移動
+#### 17 前のジャンプ候補へ移動（Shift + Tab）
 
-![操作GIF：前のジャンプ候補へ移動](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/17-previous-jump-candidate.gif)
+![操作GIF：前のジャンプ候補へ移動](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/17-previous-jump-candidate.gif)
 
 ジャンプ候補をShift + Tabで逆順に見られます。
 
-#### 18 ジャンプ候補の切り替えを終える
+#### 18 ジャンプ候補の切り替えを終える（Esc）
 
-![操作GIF：ジャンプ候補の切り替えを終える](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/18-finish-jump.gif)
+![操作GIF：ジャンプ候補の切り替えを終える](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/18-finish-jump.gif)
 
 Escで切り替えを終了し、今の場所から編集を続けられます。
 
 ### CSSへの追加
 
-#### 19 CSSに空のルールを追加する
+#### 19 CSSに空のルールを追加する（Win: Ctrl + Alt + 1 / 2 / Mac: Cmd + Alt + 1 / 2）
 
-![操作GIF：CSSに空のルールを追加する](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/19-safe-css-add.gif)
+今開いているCSSの空行で枠1・2から貼り付け、空ルールの追加先を選びます。
 
-コピーしたクラスの追加先を調べ、差分を確認してから空のCSSルールを追加します。
+#### 20 同名のCSSがあれば、その場所へ移動（Win: Ctrl + Alt + 1 / 2 / Mac: Cmd + Alt + 1 / 2）
 
-#### 20 同名のCSSがあれば、その場所へ移動
+枠1・2からCSSへ貼るとき、既存の同名ルールへの移動を選べます。
 
-![操作GIF：同名のCSSがあれば、その場所へ移動](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/20-existing-css.gif)
+#### 22 既存の条件内へ追加する（Win: Ctrl + Alt + 1 / 2 / Mac: Cmd + Alt + 1 / 2）
 
-既存ルールへ移動する候補を選ぶと、CSSを書き換えずに目的の場所を開きます。
+記述済みの@mediaなどがあれば、同じ候補一覧から条件内への空ルール追加を選べます。
 
-#### 21 追加先のCSSファイルを選ぶ
+#### 27 差分を確認してから適用する（Win: Ctrl + Alt + 1 / 2 / Mac: Cmd + Alt + 1 / 2）
 
-![操作GIF：追加先のCSSファイルを選ぶ](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/21-choose-stylesheet.gif)
-
-CSSファイルが複数あり追加先を決められない場合は、自分でファイルを選びます。
-
-#### 22 既存の条件内へ追加する
-
-![操作GIF：既存の条件内へ追加する](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/22-add-inside-media.gif)
-
-既存の@mediaなどを選び、その条件の中へ空のルールを追加できます。
-
-#### 23 新しい@mediaを作って追加する
-
-![操作GIF：新しい@mediaを作って追加する](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/23-new-media.gif)
-
-条件付きCSSの候補から、新しい@mediaを入力して追加できます。
-
-#### 24 関係や状態を指定して追加する
-
-![操作GIF：関係や状態を指定して追加する](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/24-custom-selector.gif)
-
-追加先の候補から、隣接・状態などを表すセレクタを入力できます。
-
-#### 25 貼り付け方法から通常貼り付けを選ぶ
-
-![操作GIF：貼り付け方法から通常貼り付けを選ぶ](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/25-paste-options-plain.gif)
-
-貼り付け方法の画面で「通常の貼り付け」を選ぶと、今の位置へ文字を入れます。
-
-#### 26 貼り付け方法からCSS追加を選ぶ
-
-![操作GIF：貼り付け方法からCSS追加を選ぶ](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/26-paste-options-css.gif)
-
-CSSへ整理する方を選ぶと、CSS追加先の判断と差分確認へ進みます。
-
-#### 27 差分を確認してから適用する
-
-![操作GIF：差分を確認してから適用する](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/27-confirm-css.gif)
+![操作GIF：差分を確認してから適用する](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/27-confirm-css.gif)
 
 最終確認ONのときは、差分を見て適用ボタンを押すまで元のCSSは変わりません。
 
-#### 28 CSS追加をキャンセルする
+#### 28 CSS追加をキャンセルする（Win: Ctrl + Alt + 1 / 2 / Mac: Cmd + Alt + 1 / 2）
 
-![操作GIF：CSS追加をキャンセルする](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/28-cancel-css.gif)
+![操作GIF：CSS追加をキャンセルする](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/28-cancel-css.gif)
 
 差分確認でキャンセルすると、元のCSSを変更せずに終わります。
 
-#### 29 CSSを解析できなければ中止する
-
-![操作GIF：CSSを解析できなければ中止する](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/29-stop-unsafe-css.gif)
+#### 29 CSSを解析できなければ中止する（Win: Ctrl + Alt + 1 / 2 / Mac: Cmd + Alt + 1 / 2）
 
 構文が壊れているなど、安全に追加できない場合は編集を中止します。
 
-#### 30 追加したCSSを元に戻す
+#### 30 追加したCSSを元に戻す（Win: Ctrl + Z / Mac: Cmd + Z）
 
-![操作GIF：追加したCSSを元に戻す](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/30-undo-css.gif)
+![操作GIF：追加したCSSを元に戻す](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/30-undo-css.gif)
 
 追加直後にVS Code標準のCtrl + Zで、その編集を取り消せます。
 
 ### 履歴
 
-#### 31 履歴パネルを開く
+#### 31 履歴パネルを開く（Win: Ctrl + Alt + H / Mac: Cmd + Alt + H）
 
-![操作GIF：履歴パネルを開く](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/31-history-panel.gif)
+![操作GIF：履歴パネルを開く](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/31-history-panel.gif)
 
 エクスプローラー内の「Coding Tools 履歴」を開きます。
 
-#### 32 履歴を一覧から選ぶ
+#### 32 履歴を一覧から選ぶ（コマンドパレット）
 
-![操作GIF：履歴を一覧から選ぶ](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/32-history-list.gif)
+![操作GIF：履歴を一覧から選ぶ](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/32-history-list.gif)
 
 日時とファイル名の一覧から、見たい差分を選べます。
 
-#### 33 最新の差分を開く
+#### 33 最新の差分を開く（コマンドパレット）
 
-![操作GIF：最新の差分を開く](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/33-latest-diff.gif)
+![操作GIF：最新の差分を開く](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/33-latest-diff.gif)
 
 一番新しく記録された差分を、一覧選択なしで開きます。
 
-#### 34 履歴の行をクリックして差分を見る
+#### 34 履歴の行をクリックして差分を見る（履歴の行をクリック / Enter）
 
-![操作GIF：履歴の行をクリックして差分を見る](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/34-selected-diff.gif)
+![操作GIF：履歴の行をクリックして差分を見る](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/34-selected-diff.gif)
 
 月の中にある履歴の行を選ぶと、その変更内容が開きます。
 
-#### 35 履歴から変更元ファイルを開く
+#### 35 履歴から変更元ファイルを開く（履歴の行を右クリック → 変更元ファイルへ移動）
 
-![操作GIF：履歴から変更元ファイルを開く](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/35-source-from-history.gif)
+![操作GIF：履歴から変更元ファイルを開く](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/35-source-from-history.gif)
 
 履歴の行から、編集した元ファイルの場所へ戻れます。
 
-#### 36 履歴の表示を更新する
+#### 36 履歴の表示を更新する（コマンドパレット）
 
-![操作GIF：履歴の表示を更新する](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/36-refresh-history.gif)
+![操作GIF：履歴の表示を更新する](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/36-refresh-history.gif)
 
 保存済みの履歴を読み直して、パネルの表示を更新します。
 
-#### 37 履歴フォルダーを開く
+#### 37 履歴フォルダーを開く（コマンドパレット）
 
-![操作GIF：履歴フォルダーを開く](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/37-history-folder.gif)
+![操作GIF：履歴フォルダーを開く](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/37-history-folder.gif)
 
 保存された履歴のフォルダーを、OSのエクスプローラーで開きます。
 
-#### 38 ファイル保存時の差分を残す
+#### 38 ファイル保存時の差分を残す（Win: Ctrl + S / Mac: Cmd + S）
 
-![操作GIF：ファイル保存時の差分を残す](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/38-save-history.gif)
+![操作GIF：ファイル保存時の差分を残す](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/38-save-history.gif)
 
 保存履歴がONなら、前回保存した内容からの変更を保存時に記録します。
 
-#### 39 Coding ToolsからGit pushして記録する
+#### 39 Coding ToolsからGit pushして記録する（コマンドパレット）
 
-![操作GIF：Coding ToolsからGit pushして記録する](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/39-push-and-log.gif)
+![操作GIF：Coding ToolsからGit pushして記録する](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/39-push-and-log.gif)
 
 専用コマンドでpushが成功した場合に、Git push履歴を記録します。
 
 ### 設定
 
-#### 40 Coding Toolsの設定を開く
+#### 40 Coding Toolsの設定を開く（下部のCoding Toolsをクリック）
 
-![操作GIF：Coding Toolsの設定を開く](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/40-open-settings.gif)
+下部のCoding Toolsから、コピー枠の表示・履歴・CSS・キーなどの設定を選べます。
 
-エクスプローラー内の「Coding Tools 設定」を表示します。
+#### 41 操作履歴の記録を停止・再開する（設定欄の対象行をクリック / Enter）
 
-#### 41 操作履歴の記録をON/OFF
+![操作GIF：操作履歴の記録を停止・再開する](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/41-toggle-operation.gif)
 
-![操作GIF：操作履歴の記録をON/OFF](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/41-toggle-operation.gif)
+操作履歴の保存期間でOFFを選ぶと停止し、日数を選ぶと記録を再開します。
 
-設定欄の項目をクリックするか、選択してEnterを押すとON/OFFが切り替わります。
+#### 42 保存履歴の記録を停止・再開する（設定欄の対象行をクリック / Enter）
 
-#### 42 保存履歴の記録をON/OFF
+![操作GIF：保存履歴の記録を停止・再開する](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/42-toggle-save.gif)
 
-![操作GIF：保存履歴の記録をON/OFF](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/42-toggle-save.gif)
+保存履歴の保存期間でOFFを選ぶと停止し、日数を選ぶと記録を再開します。
 
-設定欄の項目をクリックするか、選択してEnterを押すとON/OFFが切り替わります。
+#### 43 Git push履歴の記録を停止・再開する（設定欄の対象行をクリック / Enter）
 
-#### 43 Git push履歴の記録をON/OFF
+![操作GIF：Git push履歴の記録を停止・再開する](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/43-toggle-push.gif)
 
-![操作GIF：Git push履歴の記録をON/OFF](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/43-toggle-push.gif)
+Git push履歴の保存期間でOFFを選ぶと停止し、日数を選ぶと記録を再開します。
 
-設定欄の項目をクリックするか、選択してEnterを押すとON/OFFが切り替わります。
+#### 44 CSS適用前の最終確認をON/OFF（設定欄の対象行をクリック / Enter）
 
-#### 44 CSS適用前の最終確認をON/OFF
-
-![操作GIF：CSS適用前の最終確認をON/OFF](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/44-toggle-confirm.gif)
+![操作GIF：CSS適用前の最終確認をON/OFF](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/44-toggle-confirm.gif)
 
 設定欄の項目をクリックするか、選択してEnterを押すとON/OFFが切り替わります。
 
-#### 45 操作履歴の保存期間を変える
+#### 45 操作履歴の保存期間を変える（設定欄の対象行をクリック / Enter）
 
-![操作GIF：操作履歴の保存期間を変える](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/45-retention-operation.gif)
+![操作GIF：操作履歴の保存期間を変える](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/45-retention-operation.gif)
 
-操作履歴について、履歴を残す日数を1〜360日で設定できます。
+操作履歴の記録をOFFにするか、保存期間を1〜360日から選べます。
 
-#### 46 保存履歴の保存期間を変える
+#### 46 保存履歴の保存期間を変える（設定欄の対象行をクリック / Enter）
 
-![操作GIF：保存履歴の保存期間を変える](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/46-retention-save.gif)
+![操作GIF：保存履歴の保存期間を変える](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/46-retention-save.gif)
 
-保存履歴について、履歴を残す日数を1〜360日で設定できます。
+保存履歴の記録をOFFにするか、保存期間を1〜360日から選べます。
 
-#### 47 Git push履歴の保存期間を変える
+#### 47 Git push履歴の保存期間を変える（設定欄の対象行をクリック / Enter）
 
-![操作GIF：Git push履歴の保存期間を変える](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/47-retention-push.gif)
+![操作GIF：Git push履歴の保存期間を変える](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/47-retention-push.gif)
 
-Git push履歴について、履歴を残す日数を1〜360日で設定できます。
+Git push履歴の記録をOFFにするか、保存期間を1〜360日から選べます。
 
-#### 48 ショートカット一覧を開いて変える
+#### 48 ショートカット一覧を開いて変える（コマンドパレット）
 
-![操作GIF：ショートカット一覧を開いて変える](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/48-keyboard-shortcuts.gif)
+![操作GIF：ショートカット一覧を開いて変える](https://raw.githubusercontent.com/sw428/coding-tools-gifs/9900d5283282e79d19240cb91c5ad90f776ba1c1/48-keyboard-shortcuts.gif)
 
 VS Code標準のショートカット一覧で、Coding Toolsのキーを変更できます。
 
-#### 49 このGIFガイドを開く
-
-![操作GIF：このGIFガイドを開く](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/49-open-gif-guide.gif)
+#### 49 このGIFガイドを開く（コマンドパレット）
 
 Coding Toolsの設定欄から、1操作ずつのGIFガイドを開けます。
 
 ### CSSの設定
 
-#### 50 優先するCSSファイルを指定する
+#### 51 クラスの接頭辞ごとに追加先を指定する（VS Code 設定：codingTools.placementRules）
 
-![操作GIF：優先するCSSファイルを指定する](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/50-preferred-stylesheet.gif)
-
-VS Codeの設定で、HTMLから追加するときに使うCSSファイルを指定できます。
-
-#### 51 クラスの接頭辞ごとに追加先を指定する
-
-![操作GIF：クラスの接頭辞ごとに追加先を指定する](https://raw.githubusercontent.com/sw428/coding-tools-gifs/fa5841d0e773ea3311a6703ce46ffd8e8ad01377/51-placement-rules.gif)
-
-クラス名の接頭辞に応じて、基本ルールか既存の@mediaを優先できます。
+接頭辞に応じたCSS配置設定で、基本ルールか記述済み@mediaの候補を初期選択できます。
 <!-- END EXTENSION GIF DETAILS -->
