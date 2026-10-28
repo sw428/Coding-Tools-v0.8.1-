@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Coding Tools
 
 **作者：Elliot Veyne**
@@ -266,3 +267,6 @@ Coding Toolsの設定欄から、1操作ずつのGIFガイドを開けます。
 
 接頭辞に応じたCSS配置設定で、基本ルールか記述済み@mediaの候補を初期選択できます。
 <!-- END EXTENSION GIF DETAILS -->
+=======
+"# Coding-Tools-v0.8.1-" 
+>>>>>>> origin/main
