@@ -4,7 +4,7 @@ const fs=require('node:fs/promises');
 const os=require('node:os');
 const path=require('node:path');
 const {pathToFileURL}=require('node:url');
-const history=require('../history');
+const history=require('../src/history');
 
 async function run(){
   const root=await fs.mkdtemp(path.join(os.tmpdir(),'coding-tools-test-'));

@@ -25,7 +25,7 @@ function flattened(root){
 function reject(reason){return {ok:false,reason};}
 
 /** Preflight runs before any WorkspaceEdit and returns a preview string. */
-function preflight(before, selector, insertion, languageId='css'){
+function preflight(before, selector, insertion, languageId='css', commentText=null){
   if(languageId!=='css') return reject('安全版の自動配置はCSS専用です。SCSS/LESSには挿入しません。');
   if(typeof before!=='string'||!insertion||!Number.isInteger(insertion.offset)||typeof insertion.text!=='string') return reject('挿入位置を特定できません。');
   if(insertion.offset<0||insertion.offset>before.length) return reject('挿入位置がCSSの範囲外です。');
@@ -41,9 +41,14 @@ function preflight(before, selector, insertion, languageId='css'){
   const added=flattened(addition.root);
   const newRules=added.filter(x=>x.type==='rule');
   const newAt=added.filter(x=>x.type==='at');
+  const newComments=added.filter(x=>x.type==='comment');
+  if (commentText===null ? newComments.length!==0 :
+      typeof commentText!=='string' || newComments.length!==1 || newComments[0].value!==commentText ||
+      addition.root.nodes[0]!==newComments[0].node || newComments[0].node.parent!==newRules[0]?.node.parent)
+    return reject('追加できるコメントは登録済みのCSSコメント1件だけです。');
   if(newRules.length!==1||newRules[0].value.trim()!==selector.trim() ||
       newRules[0].node.nodes.length!==0 ||
-      added.some(x=>x.type==='decl'||x.type==='comment') ||
+      added.some(x=>x.type==='decl') ||
       newAt.length>1 ||
       newAt.some(x=>x.node.name!=='media'))
     return reject('追加できるのは空のCSSルール1件（または新規@media内の1件）だけです。');

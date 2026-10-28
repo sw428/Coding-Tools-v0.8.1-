@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
-const jump=require('../cross-navigation');
+const jump=require('../src/cross-navigation');
 const pkg=require('../package.json');
 const src=`<section class="course"><h2 class="course__title">A</h2><p class="course__body">B</p></section>`;
 const good=`.course {} .course__title {} .course__body {}`;
@@ -16,14 +16,12 @@ const ranked=jump.rankCandidates(source,targets);
 assert.equal(ranked[0].filename,'/work/style.css','matching neighboring classes must rank first');
 assert.equal(ranked.length,2,'other candidates are retained');
 const binds=pkg.contributes.keybindings;
-for (const [cmd,key] of [['codingTools.cycleNextJump','tab'],['codingTools.cyclePreviousJump','shift+tab'],['codingTools.endJumpCycle','escape']]) {
- const b=binds.find(x=>x.command===cmd);
- assert.equal(b.key,key);
- assert.ok(b.when.includes('codingTools.jumpCycle'),'key must apply ONLY during a jump session');
-}
+const escape=binds.find(x=>x.command==='codingTools.endJumpCycle');
+assert.equal(escape.key,'escape');assert.ok(escape.when.includes('codingTools.jumpCycle'));
+assert.ok(!binds.some(x=>['codingTools.cycleNextJump','codingTools.cyclePreviousJump'].includes(x.command)),'Class navigation owns Tab; jump candidates use their status bar button');
 assert.ok(!pkg.contributes.keybindings.some(x=>['ctrl+c','ctrl+v','cmd+c','cmd+v'].includes(x.key?.toLowerCase())));
-const extension=fs.readFileSync(path.join(__dirname,'../extension.js'),'utf8');
+const extension=fs.readFileSync(path.join(__dirname,'../src/extension.js'),'utf8');
 assert.ok(extension.includes('jumpSession={candidates:ranked'));
 assert.ok(!extension.includes('const pick = await vscode.window.showQuickPick(options'),'jump must not show a selection menu');
 assert.ok(extension.includes('clearJumpSession();'));
-console.log('✓ Direct editor navigation, contextual ranking, temporary Tab/Shift+Tab, Esc, no modal');
+console.log('✓ Direct editor navigation, contextual ranking, status-bar cycle, Esc, no modal');

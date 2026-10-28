@@ -137,22 +137,39 @@ function candidates(text, selector, options={}) {
   const all=rules(tree), allExact=all.filter(r=>ruleHasExact(r,selector));
   const current=options.offset==null ? tree.root : treeAtOffset(tree,options.offset);
   const scopeFilter=n=>scopeKey(n)===scopeKey(current);
-  const inScope=all.filter(scopeFilter);
+  let inScope=all.filter(scopeFilter);
+  if (options.sectionRange) inScope=inScope.filter(r=>r.start>=options.sectionRange.start && r.end<=options.sectionRange.end);
   const exactHere=allExact.filter(scopeFilter);
   const className=baseClass(selector);
   const part=className && className.includes('__') ? className.split('__')[0] : null;
   const family=className && className.includes('--') ? className.split('--')[0] : className;
-  let related=inScope.filter(r=> {
+  let related=options.useNaming===false?[]:inScope.filter(r=> {
     const names=[...r.prelude.matchAll(/\.(-?[_a-zA-Z\u0080-\uFFFF][\w\-\u0080-\uFFFF]*)/g)].map(m=>m[1]);
     return names.some(n=>n===family || n===className || (part && (n===part || n.startsWith(part+'__'))) || (family && n.startsWith(family+'--')));
   });
   const neighborClasses=options.neighbors||{};
   const before=neighborClasses.before && inScope.find(r=>ruleHasExact(r,'.'+neighborClasses.before));
   const after=neighborClasses.after && inScope.find(r=>ruleHasExact(r,'.'+neighborClasses.after));
+  const uniqueRule=names=>{
+    const matches=inScope.filter(r=>names.some(name=>ruleHasExact(r,'.'+name)));
+    return matches.length===1?matches[0]:null;
+  };
+  const siblingBefore=uniqueRule(options.siblingClasses?.before||[]);
+  const siblingAfter=uniqueRule(options.siblingClasses?.after||[]);
+  const parentRule=uniqueRule(options.parentClasses||[]);
   let anchor=null, why='', confident=false;
   if (before && after && before.end<=after.start && before.parent===after.parent) {
     anchor={offset:before.end,container:effectiveContainer(before)};
     why='HTMLで前後にあるクラスのCSSルール間'; confident=true;
+  } else if (siblingBefore && siblingAfter && siblingBefore.end<=siblingAfter.start && siblingBefore.parent===siblingAfter.parent) {
+    anchor={offset:siblingBefore.end,container:effectiveContainer(siblingBefore)};
+    why='HTMLで前後の兄弟要素にあるクラスのCSSルール間';confident=true;
+  } else if (siblingBefore && !siblingAfter) {
+    anchor={offset:siblingBefore.end,container:effectiveContainer(siblingBefore)};
+    why='HTMLで直前の兄弟要素にあるクラスのCSSルール後';confident=true;
+  } else if (siblingAfter && !siblingBefore) {
+    anchor={offset:siblingAfter.start,container:effectiveContainer(siblingAfter)};
+    why='HTMLで直後の兄弟要素にあるクラスのCSSルール前';confident=true;
   } else if (related.length) {
     // The same logical family must be contiguous; otherwise ordering is uncertain.
     const indices=related.map(r=>inScope.indexOf(r));
@@ -165,6 +182,15 @@ function candidates(text, selector, options={}) {
       why=part ? `.${part} に関連するセレクタ群の中` : '同じ部品の基本・関係・位置・状態の並び';
       confident=true;
     } else why='関連ルールが離れているため、挿入位置を確定できない';
+  }
+  if (!anchor && parentRule) {
+    anchor={offset:parentRule.end,container:effectiveContainer(parentRule)};
+    why='HTMLの親要素にあるクラスのCSSルール後';confident=true;
+  }
+  if (!anchor && options.sectionRange) {
+    const direct=inScope.filter(rule=>rule.parent===current);
+    anchor={offset:direct.length?direct.at(-1).end:options.sectionRange.start,container:current};
+    why='登録済みのセクションコメントの範囲内';confident=true;
   }
   if (!anchor && inScope.length===0 && current.type==='at' && current.prelude.startsWith('@media')) {
     anchor={offset:current.end-1,container:current};why='選択中のメディアクエリ末尾';confident=true;

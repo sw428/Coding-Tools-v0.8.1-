@@ -1,6 +1,6 @@
 'use strict';
 const assert = require('node:assert/strict');
-const {classAt,findTargets,lineAt} = require('../cross-navigation');
+const {classAt,findTargets,lineAt} = require('../src/cross-navigation');
 const html = `<section class="card active"><h2 class="card__title">Hello</h2><p class=""></p></section>`;
 const css = `.card {display:block;}\n.card:hover {color:red;}\n@media (min-width:768px){.card {display:grid;}\n.card__title {font-size:2rem;}}\n/* .card {} */`;
 const card=html.indexOf('card');

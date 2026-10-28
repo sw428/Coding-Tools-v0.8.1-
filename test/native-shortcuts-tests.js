@@ -15,5 +15,22 @@ for(const id of ['codingTools.copy1','codingTools.paste1','codingTools.copy2','c
 }
 assert.ok(binds.some(e=>e.command==='codingTools.copy1'));
 assert.ok(binds.some(e=>e.command==='codingTools.paste1'));
+assert.ok(pkg.contributes.commands.some(c=>c.command==='codingTools.jumpBetweenHtmlCss'));
+assert.ok(!binds.some(e=>e.command==='codingTools.jumpBetweenHtmlCss'),'The derived command has no unsolicited default key');
+assert.ok(!binds.some(e=>e.key==='f12'),'Native Go to Definition must remain available');
 assert.ok(pkg.description.includes('β'), 'description must identify the beta release');
+for(const {command} of pkg.contributes.commands){
+  assert.ok(pkg.contributes.menus.commandPalette.some(item=>item.command===command&&item.when==='false'),'Palette entry visible: '+command);
+}
 console.log('native-shortcuts-tests: passed');
+
+for(const n of [1,2]){
+  const entries=binds.filter(e=>e.command==='codingTools.paste'+n);
+  assert.ok(entries.some(e=>e.when==='editorTextFocus'&&!e.args));
+  assert.ok(entries.some(e=>e.when==='inputFocus && !editorTextFocus'&&e.args?.target==='input'));
+}
+
+for(const n of [1,2]){
+ const entries=binds.filter(k=>k.command==='codingTools.paste'+n);
+ for(const [when,target] of [['searchInputBoxFocus','workspaceSearch'],['findInputFocussed','editorSearch']])assert.ok(entries.some(k=>k.when===when&&k.args?.target===target));
+}

@@ -4,8 +4,8 @@ const fs=require('node:fs/promises');
 const path=require('node:path');
 const os=require('node:os');
 const {pathToFileURL}=require('node:url');
-const settings=require('../settings');
-const history=require('../history');
+const settings=require('../src/settings');
+const history=require('../src/history');
 async function run(){
   const values=new Map();
   const root=await fs.mkdtemp(path.join(os.tmpdir(),'ct-v07-'));
@@ -38,11 +38,12 @@ async function run(){
     }
     assert.ok(/^0\.8\./.test(pkg.version),'v0.8.x version');
     const docs=await fs.readdir(path.join(__dirname,'..','docs'));
-    assert.equal(docs.filter(x=>x.endsWith('.svg')).length,9);
+    for(const name of ['01-class-navigation.svg','02-four-slots.svg','03-smart-paste.svg','04-css-placement.svg','05-confirmation.svg','06-history.svg','07-internal-settings.svg','08-shortcuts.svg','09-cross-jump.svg'])assert.ok(docs.includes(name),`Missing guide diagram: ${name}`);
+    assert.ok(docs.includes('module-overview.svg'));
     const test_svg=await fs.readFile(path.join(__dirname,'..','docs','07-internal-settings.svg'),'utf8');
     assert.match(test_svg,/@keyframes/);
     assert.match(test_svg,/360/);
-    const source=await fs.readFile(path.join(__dirname,'..','settings.js'),'utf8');
+    const source=await fs.readFile(path.join(__dirname,'..','src','settings.js'),'utf8');
     assert.match(source,/globalState/);
     assert.doesNotMatch(source,/getConfiguration\(/);
     const repoRoot=path.resolve(__dirname,'..');
@@ -75,7 +76,7 @@ async function run(){
     };
     settings.registerSettingsUI(vscode,{...context,extensionPath:repoRoot,subscriptions:[]},async()=>{changedCount++;},async()=>{displayChangedCount++;});
     const rows=settingsProvider.getChildren();
-    assert.deepEqual(rows.filter(item=>item.kind==='toggle').map(item=>item.key),['confirm']);
+    assert.deepEqual(rows.filter(item=>item.kind==='toggle').map(item=>item.key),[]);
     assert.equal(rows.filter(item=>item.kind==='days').length,3);
     const chooseRetention=handlers.get('codingTools.chooseRetentionDays');
     for(const stage of ['operation','save','push']){
@@ -114,7 +115,6 @@ async function run(){
         assert.deepEqual([...values],beforeCancel,'Invalid or cancelled custom days must not enable recording');
       }
     }
-    assert.equal(settings.enabled(context,'confirm'),true,'History choices must not change the final confirmation setting');
     const about=settingsProvider.getChildren().find(item=>item.kind==='about');
     assert.ok(about,'Settings must provide an entry for the separate project information');
     const aboutItem=settingsProvider.getTreeItem(about);
@@ -152,7 +152,7 @@ async function run(){
     assert.ok(menuItems.some(item=>item.label==='操作履歴の保存期間'));
     assert.ok(menuItems.some(item=>item.label==='CSS配置ルールの設定'));
     assert.ok(menuItems.some(item=>item.label==='キーボードショートカット一覧'));
-    assert.ok(menuItems.some(item=>item.label==='履歴を開く'));
+    assert.ok(!menuItems.some(item=>item.label==='履歴を開く'));
     pickQueue.push('コピー枠1の表示',(items,options)=>{
       assert.equal(options.canPickMany,true);
       assert.equal(items.find(item=>item.part==='number').picked,false);
@@ -170,12 +170,11 @@ async function run(){
     assert.ok(hub.visible,'Settings remain visible with both slots hidden');
     pickQueue.push('コピー枠1の表示',items=>items);await openSettings();
     assert.ok(settings.SLOT_DISPLAY_OPTIONS.every(option=>settings.enabled(context,settings.slotDisplayKey(1,option.part))));
-    for(const [label,command] of [['CSS配置ルールの設定','workbench.action.openSettings'],['履歴を開く','codingTools.showHistoryPanel'],['GIFで使い方を確認','codingTools.openVisualGuide'],['サイドバーで設定を開く','codingTools.settingsView.focus']]){
+    for(const [label,command] of [['CSS配置ルールの設定','workbench.action.openSettings'],['GIFで使い方を確認','codingTools.openVisualGuide'],['サイドバーで設定を開く','codingTools.settingsView.focus']]){
       pickQueue.push(label);await openSettings();
       assert.equal(executed.at(-1)[0],command);
     }
     assert.equal(changedCount,prunesBeforeDisplay);
-    assert.equal(settings.enabled(context,'confirm'),true);
     assert.equal(pickQueue.length,0);
     console.log('v07-tests: passed');
   }finally{await fs.rm(root,{recursive:true,force:true});}

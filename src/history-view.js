@@ -42,22 +42,13 @@ function makeHistoryUI(vscode, context) {
       return node;
     }
   };
-  // Keep the TreeView instance so it can be focused even before the first log.
+  // History is opened directly from the Explorer view.
   const treeView = vscode.window.createTreeView('codingTools.history', {
     treeDataProvider: provider,
     showCollapseAll: true,
   });
   context.subscriptions.push(
     treeView,changed,
-    vscode.commands.registerCommand('codingTools.showHistoryPanel',async()=>{
-      try {
-        await vscode.commands.executeCommand('workbench.view.explorer');
-        await vscode.commands.executeCommand('codingTools.history.focus');
-      } catch(error) {
-        vscode.window.showWarningMessage('履歴パネルへ移動できません。コマンド「ビュー: ビューを開く」から「Coding Tools 履歴」を選んでください。');
-        await vscode.commands.executeCommand('codingTools.openHistory');
-      }
-    }),
     vscode.commands.registerCommand('codingTools.refreshHistory',()=>{cachedEntries=null;changed.fire(undefined);}),
     vscode.commands.registerCommand('codingTools.openDiff',async value => {
       const entry = value?.log || value;
@@ -82,21 +73,6 @@ function makeHistoryUI(vscode, context) {
         editor.selection=new vscode.Selection(pos,pos);
         editor.revealRange(new vscode.Range(pos,pos),vscode.TextEditorRevealType.InCenterIfOutsideViewport);
       } catch(e){vscode.window.showWarningMessage(`変更元ファイルを開けません: ${e.message}`);}
-    }),
-    vscode.commands.registerCommand('codingTools.openLatestDiff',async()=>{
-      const logs=await history.entries(context);
-      if(!logs.length){vscode.window.showInformationMessage('Coding Tools: 保存済みの差分履歴はありません。');return;}
-      await vscode.commands.executeCommand('codingTools.openDiff', logs[0]);
-    }),
-    vscode.commands.registerCommand('codingTools.openHistory',async()=>{
-      const logs=await history.entries(context);
-      if(!logs.length){vscode.window.showInformationMessage('Coding Tools: 保存済みの差分履歴はありません。');return;}
-      const selected=await vscode.window.showQuickPick(logs.map(log=>({
-        label:`$(diff) ${new Date(log.createdAt).toLocaleString('ja-JP')}  ${log.sourceName}`,
-        description:log.action,detail:`${log.month} / ${log.sourceUri}`,
-        log
-      })),{placeHolder:'月別に保存された履歴を日時で選択 → Enterで差分を開く',matchOnDescription:true});
-      if(selected)await vscode.commands.executeCommand('codingTools.openDiff',selected.log);
     }),
     vscode.commands.registerCommand('codingTools.revealHistoryFolder',async()=>{
       await fs.mkdir(history.folder(context),{recursive:true});

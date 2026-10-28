@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="740" viewBox="0 0 1000 740" role="img" aria-labelledby="title desc">
+  <title id="title">Coding Toolsの概念上のモジュール構成</title>
+  <desc id="desc">HTMLとCSSエディタから、M01のクラス移動、またはM02のコピー・貼り付け、M03の構造情報の保持、M04のCSS配置判断へ進み、CSSへ自動反映して利用者が結果を検証する。M05は履歴、M06は規約設定、M07は環境分離。実装上のファイル分割や依存関係を示す図ではない。</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 Z" fill="#526578"/></marker></defs>
+  <rect width="1000" height="740" fill="#f4f7fb"/>
+  <g font-family="'Yu Gothic','Meiryo',sans-serif" text-anchor="middle" fill="#172b40">
+    <rect x="40" y="25" width="920" height="62" rx="12" fill="#172b40"/>
+    <text x="500" y="64" font-size="23" font-weight="bold" fill="white">HTML / CSS エディタ</text>
+    <text x="500" y="119" font-size="17">利用者による操作</text>
+    <g fill="none" stroke="#526578" stroke-width="2" marker-end="url(#arrow)">
+      <path d="M 170 88 V 150" marker-start="url(#arrow)"/>
+      <path d="M 500 125 V 150"/>
+      <path d="M 500 244 V 275"/>
+      <path d="M 500 369 V 400"/>
+      <path d="M 650 447 H 700"/>
+      <path d="M 830 494 V 520"/>
+    </g>
+    <g stroke="#007f99" stroke-width="2" fill="#e6f5f7">
+      <rect x="40" y="150" width="260" height="110" rx="12"/>
+      <rect x="350" y="150" width="300" height="94" rx="12"/>
+      <rect x="350" y="275" width="300" height="94" rx="12"/>
+      <rect x="350" y="400" width="300" height="94" rx="12"/>
+    </g>
+    <text x="170" y="181" font-size="18" font-weight="bold">M01　クラス移動</text>
+    <text x="170" y="220" font-size="20">HTML ⇄ CSS</text>
+    <text x="500" y="182" font-size="20" font-weight="bold">M02　コピー・貼り付け</text>
+    <text x="500" y="216" font-size="17">2つの保存枠</text>
+    <text x="500" y="307" font-size="20" font-weight="bold">M03　構造情報の保持</text>
+    <text x="500" y="341" font-size="17">クラス・コピー元・DOM関係</text>
+    <text x="500" y="432" font-size="20" font-weight="bold">M04　CSS配置判断</text>
+    <text x="500" y="466" font-size="17">既存CSS・HTML構造・規約</text>
+    <rect x="700" y="400" width="260" height="94" rx="12" fill="#eaf4e8" stroke="#3d7940" stroke-width="2"/>
+    <text x="830" y="438" font-size="19" font-weight="bold">自動配置 → CSSへ反映</text>
+    <text x="830" y="471" font-size="16">通常は選択待ちなし</text>
+    <text x="830" y="543" font-size="18">利用者が結果を検証</text>
+    <text x="500" y="585" font-size="20" font-weight="bold">共通・拡張モジュール</text>
+    <g stroke="#9aa9b8" stroke-width="1.5" fill="white">
+      <rect x="40" y="605" width="280" height="94" rx="12"/>
+      <rect x="360" y="605" width="280" height="94" rx="12" stroke-dasharray="6 4"/>
+      <rect x="680" y="605" width="280" height="94" rx="12" stroke-dasharray="6 4"/>
+    </g>
+    <text x="180" y="640" font-size="20" font-weight="bold">M05　履歴・Diff</text>
+    <text x="180" y="675" font-size="17">基本機能あり</text>
+    <text x="500" y="640" font-size="20" font-weight="bold">M06　規約設定</text>
+    <text x="500" y="675" font-size="17">構想</text>
+    <text x="820" y="640" font-size="20" font-weight="bold">M07　環境分離</text>
+    <text x="820" y="675" font-size="17">構想</text>
+    <text x="500" y="727" font-size="14" fill="#526578">概念図：実際のファイル分割・依存関係・実装完了を示すものではない</text>
+  </g>
+</svg>

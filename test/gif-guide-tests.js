@@ -6,10 +6,16 @@ const vm = require('node:vm');
 const root = path.resolve(__dirname,'..');
 const pkg = require('../package.json');
 const manifest = require('../tools/gif-guide-manifest.json');
+for(const [id,command] of [['01','codingTools.nextClass'],['02','codingTools.previousClass']]){
+ const demo=manifest.demos.find(d=>d.id===id),binding=pkg.contributes.keybindings.find(k=>k.command===command);
+ const normalize=value=>value.toLowerCase().replace(/\s+/g,'');
+ assert.equal(normalize(demo.key),normalize(binding.key),'Guide Windows key matches extension: '+id);
+ assert.equal(normalize(demo.mac),normalize(binding.mac),'Guide Mac key matches extension: '+id);
+}
 const guide = fs.readFileSync(path.join(root,'docs/visual-guide.html'),'utf8');
 const readme = fs.readFileSync(path.join(root,'README.md'),'utf8');
 assert.match(manifest.readmeImageBaseUrl, /^https:\/\/raw\.githubusercontent\.com\/sw428\/coding-tools-gifs\/[a-f0-9]{40}\/$/);
-assert.equal([...readme.matchAll(/!\[操作GIF：/g)].length, manifest.demos.filter(d=>d.readmeImage!==false).length);
+assert.equal([...readme.matchAll(/!\[操作GIF：/g)].length, manifest.demos.length);
 assert.ok(!/!\[[^\]]*\]\((?!https:)[^)]+\)/.test(readme), 'Details images must use HTTPS URLs');
 for (const demo of manifest.demos) {
  if(demo.readmeImage!==false)assert.ok(readme.includes(']('+manifest.readmeImageBaseUrl+demo.id+'-'+demo.slug+'.gif)\n\n'+demo.description), 'Missing HTTPS GIF and caption: '+demo.id);
@@ -20,6 +26,18 @@ for (const file of ['README.md','docs/GIF_GUIDE.md','docs/visual-guide.html','do
  assert.ok(!/仮想画面|実機録画/.test(fs.readFileSync(path.join(root,file),'utf8')), 'Removed labels remain: '+file);
 }
 assert.ok(!guide.includes('class="keys"'), 'Duplicate key rows must not appear below operation headings');
+// Reader-facing numbers must be consecutive in every generated guide.
+const expectedNumbers=Array.from({length:manifest.demos.length},(_,i)=>String(i+1).padStart(2,'0'));
+for(const [file,pattern] of [
+ ['README.md',/^#### (\d{2}) /gm],
+ ['docs/GIF_GUIDE.md',/^### (\d{2}) /gm],
+ ['docs/visual-guide.html',/<span class="number">(\d{2})<\/span>/g],
+ ['docs/media/gif/index.html',/<span class="number">(\d{2})<\/span>/g]
+]){
+ const text=fs.readFileSync(path.join(root,file),'utf8');
+ assert.deepEqual([...text.matchAll(pattern)].map(match=>match[1]),expectedNumbers,'Numbering must follow display order: '+file);
+}
+
 const covered = new Set(manifest.demos.flatMap(d=>d.commands));
 for(const {command} of pkg.contributes.commands) assert.ok(covered.has(command),'Missing demo: '+command);
 assert.equal(new Set(manifest.demos.map(d=>d.id)).size,manifest.demos.length);
@@ -47,12 +65,12 @@ const vscode={
   showWarningMessage:message=>{throw Error(message);}
  }
 };
-const mocks={vscode,'./safe-preview':{register(){}},'./settings':{...require('../settings'),registerSettingsUI(){}},
+const mocks={vscode,'./settings':{...require('../src/settings'),registerSettingsUI(){}},
  './history-view':{makeHistoryUI:()=>({refresh(){}})},'./save-history':{startSaveHistory(){}},
  './git-push-history':{registerGitPushHistory(){}},'./history':{prune:async()=>{}}};
-const sandbox={module:{exports:{}},require:id=>Object.hasOwn(mocks,id)?mocks[id]:require(id.startsWith('.')?path.join(root,id):id),
+const sandbox={module:{exports:{}},require:id=>Object.hasOwn(mocks,id)?mocks[id]:require(id.startsWith('.')?path.join(root,'src',id):id),
  setInterval:()=>({unref(){}}),clearInterval(){},TextDecoder};
-vm.runInNewContext(fs.readFileSync(path.join(root,'extension.js'),'utf8'),sandbox,{filename:'extension.js'});
+vm.runInNewContext(fs.readFileSync(path.join(root,'src','extension.js'),'utf8'),sandbox,{filename:'extension.js'});
 (async()=>{
  sandbox.module.exports.activate({extensionPath:root,subscriptions:[],globalState:{get(){}}});
  await command();

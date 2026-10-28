@@ -7,7 +7,7 @@
   "author": {
     "name": "Elliot Veyne"
   },
-  "icon": "ロゴ-文字なし.png",
+  "icon": "src/assets/ロゴ-文字なし.png",
   "license": "MIT",
   "engines": {
     "vscode": "^1.85.0"
@@ -26,7 +26,7 @@
     "navigation",
     "定義ジャンプ"
   ],
-  "main": "./extension.js",
+  "main": "./src/extension.js",
   "extensionKind": [
     "ui"
   ],
@@ -63,6 +63,11 @@
         "category": "Coding Tools"
       },
       {
+        "command": "codingTools.jumpBetweenHtmlCss",
+        "title": "対応するHTML／CSSへ移動",
+        "category": "Coding Tools"
+      },
+      {
         "command": "codingTools.nextClass",
         "title": "次のクラスへ移動（HTML / CSS）",
         "category": "Coding Tools"
@@ -75,25 +80,8 @@
       {
         "command": "codingTools.pushAndLog",
         "title": "Git pushを実行して履歴を記録",
-        "category": "Coding Tools"
-      },
-      {
-        "command": "codingTools.showHistoryPanel",
-        "title": "履歴パネルを表示（エクスプローラー）",
         "category": "Coding Tools",
-        "icon": "$(list-tree)"
-      },
-      {
-        "command": "codingTools.openHistory",
-        "title": "差分履歴の一覧を開く",
-        "category": "Coding Tools",
-        "icon": "$(list-tree)"
-      },
-      {
-        "command": "codingTools.openLatestDiff",
-        "title": "最新の差分を開く",
-        "category": "Coding Tools",
-        "icon": "$(history)"
+        "icon": "$(repo-push)"
       },
       {
         "command": "codingTools.openDiff",
@@ -149,17 +137,27 @@
       },
       {
         "command": "codingTools.cycleNextJump",
-        "title": "ジャンプ候補：次（Tab）",
+        "title": "ジャンプ候補：次",
         "category": "Coding Tools"
       },
       {
         "command": "codingTools.cyclePreviousJump",
-        "title": "ジャンプ候補：前（Shift+Tab）",
+        "title": "ジャンプ候補：前",
         "category": "Coding Tools"
       },
       {
         "command": "codingTools.endJumpCycle",
         "title": "ジャンプ候補の切り替えを終了",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.previousSameClass",
+        "title": "同じファイル内の前の同名クラスへ移動",
+        "category": "Coding Tools"
+      },
+      {
+        "command": "codingTools.nextSameClass",
+        "title": "同じファイル内の次の同名クラスへ移動",
         "category": "Coding Tools"
       }
     ],
@@ -201,37 +199,85 @@
         "when": "editorTextFocus"
       },
       {
-        "command": "codingTools.nextClass",
-        "key": "ctrl+alt+j",
-        "mac": "cmd+alt+j",
-        "when": "editorTextFocus && (editorLangId == css || editorLangId == scss || editorLangId == less || editorLangId == html || editorLangId == vue || editorLangId == php || editorLangId == javascriptreact || editorLangId == typescriptreact)"
-      },
-      {
-        "command": "codingTools.previousClass",
-        "key": "ctrl+alt+k",
-        "mac": "cmd+alt+k",
-        "when": "editorTextFocus && (editorLangId == css || editorLangId == scss || editorLangId == less || editorLangId == html || editorLangId == vue || editorLangId == php || editorLangId == javascriptreact || editorLangId == typescriptreact)"
-      },
-      {
-        "command": "codingTools.showHistoryPanel",
-        "key": "ctrl+alt+h",
-        "mac": "cmd+alt+h",
-        "when": "!inQuickOpen"
-      },
-      {
-        "command": "codingTools.cycleNextJump",
-        "key": "tab",
-        "when": "editorTextFocus && codingTools.jumpCycle"
-      },
-      {
-        "command": "codingTools.cyclePreviousJump",
-        "key": "shift+tab",
-        "when": "editorTextFocus && codingTools.jumpCycle"
-      },
-      {
         "command": "codingTools.endJumpCycle",
         "key": "escape",
         "when": "editorTextFocus && codingTools.jumpCycle"
+      },
+      {
+        "command": "codingTools.nextSameClass",
+        "key": "ctrl+tab",
+        "when": "editorTextFocus && codingTools.classAtCursor && !suggestWidgetVisible && !inSnippetMode && !editorTabMovesFocus"
+      },
+      {
+        "command": "codingTools.previousSameClass",
+        "key": "ctrl+shift+tab",
+        "when": "editorTextFocus && codingTools.classAtCursor && !suggestWidgetVisible && !inSnippetMode && !editorTabMovesFocus"
+      },
+      {
+        "command": "codingTools.paste1",
+        "key": "ctrl+alt+1",
+        "mac": "cmd+alt+1",
+        "when": "inputFocus && !editorTextFocus",
+        "args": {
+          "target": "input"
+        }
+      },
+      {
+        "command": "codingTools.paste2",
+        "key": "ctrl+alt+2",
+        "mac": "cmd+alt+2",
+        "when": "inputFocus && !editorTextFocus",
+        "args": {
+          "target": "input"
+        }
+      },
+      {
+        "command": "codingTools.previousClass",
+        "key": "ctrl+1",
+        "mac": "cmd+1",
+        "when": "editorTextFocus && codingTools.classAtCursor && !suggestWidgetVisible && !inSnippetMode && !editorTabMovesFocus"
+      },
+      {
+        "command": "codingTools.nextClass",
+        "key": "ctrl+2",
+        "mac": "cmd+2",
+        "when": "editorTextFocus && codingTools.classAtCursor && !suggestWidgetVisible && !inSnippetMode && !editorTabMovesFocus"
+      },
+      {
+        "command": "codingTools.paste1",
+        "key": "ctrl+alt+1",
+        "mac": "cmd+alt+1",
+        "when": "searchInputBoxFocus",
+        "args": {
+          "target": "workspaceSearch"
+        }
+      },
+      {
+        "command": "codingTools.paste1",
+        "key": "ctrl+alt+1",
+        "mac": "cmd+alt+1",
+        "when": "findInputFocussed",
+        "args": {
+          "target": "editorSearch"
+        }
+      },
+      {
+        "command": "codingTools.paste2",
+        "key": "ctrl+alt+2",
+        "mac": "cmd+alt+2",
+        "when": "searchInputBoxFocus",
+        "args": {
+          "target": "workspaceSearch"
+        }
+      },
+      {
+        "command": "codingTools.paste2",
+        "key": "ctrl+alt+2",
+        "mac": "cmd+alt+2",
+        "when": "findInputFocussed",
+        "args": {
+          "target": "editorSearch"
+        }
       }
     ],
     "configuration": {
@@ -245,6 +291,125 @@
           "additionalProperties": {
             "type": "string"
           }
+        },
+        "codingTools.help.enabled": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "description": "クラス名の行末に表示する操作ヘルプ（注釈）のON/OFF。OFFでも移動・コピー・貼り付けの操作は使えます。"
+        },
+        "codingTools.help.durationSeconds": {
+          "type": "number",
+          "default": 2,
+          "minimum": 0.5,
+          "maximum": 30,
+          "scope": "resource",
+          "description": "簡易ヘルプを表示する秒数（0.5〜30秒）。"
+        },
+        "codingTools.copyInformation": {
+          "type": "array",
+          "default": [
+            "source",
+            "neighbors",
+            "relations",
+            "sectioning",
+            "roles",
+            "overview"
+          ],
+          "uniqueItems": true,
+          "scope": "resource",
+          "items": {
+            "type": "string",
+            "enum": [
+              "source",
+              "neighbors",
+              "relations",
+              "sectioning",
+              "roles",
+              "overview"
+            ],
+            "enumDescriptions": [
+              "コピー元ファイル・言語・位置",
+              "同じ接頭辞の前後クラス",
+              "要素と親子・兄弟関係",
+              "section/article/nav/asideとheader/footer/mainなどの領域",
+              "HTML構造上の役割",
+              "対象クラスのHTML全体での出現と所属領域・領域の並び"
+            ]
+          },
+          "description": "コピー時に保存枠へ保持する情報。クラス名自体は必ず保持する。OFFにした情報は次のコピー時に保存せず、貼り付け判断にも使わない。"
+        },
+        "codingTools.pasteInformation": {
+          "type": "array",
+          "default": [
+            "neighbors",
+            "siblings",
+            "parent",
+            "section",
+            "naming",
+            "overview"
+          ],
+          "uniqueItems": true,
+          "scope": "resource",
+          "items": {
+            "type": "string",
+            "enum": [
+              "neighbors",
+              "siblings",
+              "parent",
+              "section",
+              "naming",
+              "overview"
+            ],
+            "enumDescriptions": [
+              "コピー元で同じ接頭辞を持つ前後クラス",
+              "コピー元の前後の兄弟要素のクラス",
+              "コピー元の親要素のクラス",
+              "登録したセクションコメントの範囲",
+              "クラス名の部品・接頭辞による既存CSSのグループ",
+              "HTML全体の出現と所属領域。複数領域で使うクラスを共通と認識する"
+            ]
+          },
+          "description": "CSS追加先の判断に使う情報。実際にコピー枠へ保存されている情報だけを使う。空配列ではこれらを使わず追加先を選ぶ。"
+        },
+        "codingTools.addSectionComments": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "description": "sectionCommentsに登録したCSSコメントを、対応するHTML領域の空ルール追加時に付ける。同じ範囲に同じコメントがあれば増やさない。クエリーは作成しない。"
+        },
+        "codingTools.sectionComments": {
+          "type": "object",
+          "default": {},
+          "scope": "resource",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "普段使うCSSコメントを登録する。キーはheader/footer/sectionなどのタグ名、#id、.クラス名。値には /* ... */ 形式のコメント1つをそのまま指定する。最も近いHTML領域でid→クラス→タグの順に照合する。未登録ならコメントを生成しない。 書き方が分からない場合は、使いたいCSSコメントをGPTに貼り付けて「Coding Toolsの設定に登録できるJSON形式に直してください」と頼んでください。"
+        },
+        "codingTools.requireCommentGroup": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "description": "空ルールをコメントのまとまりに追加します。自動貼り付けでは対応する目印がない場合に仮置きの目印を作ります。"
+        },
+        "codingTools.sectionCommentTemplate": {
+          "type": "string",
+          "default": "/* {name}\n--------------------------------*/",
+          "scope": "resource",
+          "markdownDescription": "基本書式は、1行目に名前を書き、改行して2行目に32本のハイフンと `*/` を置きます。\n\n```css\n/* 名前\n--------------------------------*/\n```\n\n設定JSONでは、名前の位置を `{name}`、改行を `\\n` で表します。\n\n```json\n{\n  \"codingTools.sectionCommentTemplate\": \"/* {name}\\n--------------------------------*/\"\n}\n```\n\n書き方が分からない場合は、使いたいCSSコメントをGPTに貼り付けて「Coding Toolsの設定に登録できるJSON形式に直してください」と頼んでください。\n\nsection/header/footerに付けるCSS見出しコメントの書式。{name}に領域名を入れる。header/footerはタグ名、sectionはクラス名→id→タグ名。asideは通常のクラスとして書き、内部構造情報だけを保持する。空文字なら個別登録または既存コメントを使う。"
+        },
+        "codingTools.automaticPaste": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "description": "CSSへのクラス貼り付けを選択画面なしで実行する。既存ルールへ移動し、追加先の目印がなければ作成する。OFFの場合だけ従来の候補画面を表示する。"
+        },
+        "codingTools.provisionalCommentTemplate": {
+          "type": "string",
+          "default": "/* 仮置き: {name}\n--------------------------------*/",
+          "scope": "resource",
+          "description": "所属を確定できないクラスに付ける仮置きの目印。{name}は部品名、複数領域で使われるクラスは「共通」。既存コードを移動せず、この目印の下へ追加する。"
         }
       }
     },
@@ -265,14 +430,9 @@
     "menus": {
       "view/title": [
         {
-          "command": "codingTools.openHistory",
+          "command": "codingTools.pushAndLog",
           "when": "view == codingTools.history",
           "group": "navigation@0"
-        },
-        {
-          "command": "codingTools.openLatestDiff",
-          "when": "view == codingTools.history",
-          "group": "navigation@1"
         },
         {
           "command": "codingTools.refreshHistory",
@@ -328,6 +488,86 @@
         {
           "command": "codingTools.paste2",
           "when": "false"
+        },
+        {
+          "command": "codingTools.jumpToCss",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.jumpToHtml",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.nextClass",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.previousClass",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.pushAndLog",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.openDiff",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.openSource",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.refreshHistory",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.revealHistoryFolder",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.openSettings",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.toggleSetting",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.chooseRetentionDays",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.openKeyboardShortcuts",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.openVisualGuide",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.cycleNextJump",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.cyclePreviousJump",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.endJumpCycle",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.previousSameClass",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.nextSameClass",
+          "when": "false"
+        },
+        {
+          "command": "codingTools.jumpBetweenHtmlCss",
+          "when": "false"
         }
       ]
     },
@@ -339,12 +579,10 @@
     ]
   },
   "scripts": {
-    "test": "node test/run-tests.js && node test/placement-tests.js && node test/confirmation-tests.js && node test/history-tests.js && node test/v06-tests.js && node test/v07-tests.js && node test/native-shortcuts-tests.js && node test/cross-navigation-tests.js && node test/jump-cycle-tests.js && node test/safe-placement-tests.js && node test/gif-guide-tests.js && node test/paste-context-tests.js"
+    "test": "node test/run-tests.js && node test/placement-tests.js && node test/confirmation-tests.js && node test/history-tests.js && node test/v06-tests.js && node test/v07-tests.js && node test/native-shortcuts-tests.js && node test/cross-navigation-tests.js && node test/jump-cycle-tests.js && node test/safe-placement-tests.js && node test/gif-guide-tests.js && node test/paste-context-tests.js && node test/html-context-tests.js && node test/workflow-tests.js && node test/automatic-placement-tests.js && node test/class-navigation-tests.js && node test/external-paste-tests.js"
   },
   "activationEvents": [
     "onView:codingTools.history",
-    "onCommand:codingTools.showHistoryPanel",
-    "onCommand:codingTools.openHistory",
     "onStartupFinished",
     "onView:codingTools.settingsView",
     "onCommand:codingTools.openSettings",

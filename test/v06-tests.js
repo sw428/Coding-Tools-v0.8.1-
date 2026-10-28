@@ -4,8 +4,8 @@ const fs=require('node:fs/promises');
 const os=require('node:os');
 const path=require('node:path');
 const {pathToFileURL}=require('node:url');
-const history=require('../history');
-const settings=require('../settings');
+const history=require('../src/history');
+const settings=require('../src/settings');
 async function main(){
   const values=new Map();
   const ctx={globalState:{get:(k,f)=>values.has(k)?values.get(k):f,update:async(k,v)=>{values.set(k,v);}},globalStorageUri:{fsPath:await fs.mkdtemp(path.join(os.tmpdir(),'ct-v06-'))}};

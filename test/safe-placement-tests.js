@@ -1,7 +1,7 @@
 'use strict';
 const assert=require('node:assert/strict');
-const p=require('../placement');
-const safe=require('../safe-placement');
+const p=require('../src/placement');
+const safe=require('../src/safe-placement');
 let passed=0;
 const t=(name,fn)=>{fn();console.log('✓',name);passed++;};
 function direct(before,selector,at=before.length,container=null){

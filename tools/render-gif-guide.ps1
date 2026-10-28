@@ -42,10 +42,10 @@ public static class CodingToolsGifRenderer {
   }
   if(marks){var mm=A(st,"marks");if(mm.Length>0){var m=mm[mm.Length-1];int r=N(m,"row");if(r<lines.Length){string t=Convert.ToString(lines[r]);int start=Math.Min(t.Length,N(m,"start"));int xx=x+52+(int)Measure(g,t.Substring(0,start),font);Pointer(g,Math.Min(x+w-30,xx+16),y+30+r*lineHeight);}}}
  }
- static Bitmap Frame(object demo,object st,int index,int count){
+ static Bitmap Frame(object demo,object st,int index,int count,int number){
   var bmp=new Bitmap(W,H);using(var g=Graphics.FromImage(bmp)){
    g.Clear(C("#eff3fa"));g.TextRenderingHint=TextRenderingHint.AntiAliasGridFit;
-   Box(g,0,0,W,7,"#2367d1");Txt(g,S(demo,"id")+"  "+S(demo,"title"),24,22,1070,40,28,"#172d4e",false,true);
+   Box(g,0,0,W,7,"#2367d1");Txt(g,number.ToString("00")+"  "+S(demo,"title"),24,22,1070,40,28,"#172d4e",false,true);
    Box(g,24,114,1072,453,"#181818");Box(g,24,114,1072,28,"#323233");
    Txt(g,"Coding Tools Demo - Visual Studio Code",38,118,700,24,13,"#c6c6c6");
    Box(g,24,142,235,425,"#252526");Txt(g,"EXPLORER",38,156,200,22,14,"#b6b6b6");
@@ -60,10 +60,11 @@ public static class CodingToolsGifRenderer {
    }else if(mode=="settings" || mode=="folder"){
     Box(g,260,178,835,388,"#1e1e1e");for(int i=0;i<lines.Length;i++){int yy=192+i*31;if(yy+27>566)break;if(N(st,"activeRow",-1)==i)Box(g,272,yy-2,808,30,"#264f78");string t=Convert.ToString(lines[i]);Txt(g,t,285,yy,785,28,i==0?20:18,t.StartsWith("OFF")?"#eab56a":"#e0e0e0",false,i==0);if(N(st,"activeRow",-1)==i)Pointer(g,1040,yy+5);}
    }else Code(g,lines,260,178,835,388,st,mode=="patch");
+   var help=V(st,"inlineHelp");if(help!=null){int row=N(help,"row");if(row>=0 && row<lines.Length){int xx=330+(int)Measure(g,Convert.ToString(lines[row]),19);Txt(g,S(help,"text"),xx,192+row*29,1080-xx,26,16,"#a0a8b4");}}
    var info=A(st,"info");if(info.Length>0){int ih=36+info.Length*25;int iy=552-ih;Box(g,340,iy,704,ih,"#273649");Border(g,340,iy,704,ih,"#597ea9");for(int i=0;i<info.Length;i++)Txt(g,Convert.ToString(info[i]),356,iy+14+i*25,668,25,16,"#d3e5f8");}
    var menu=A(st,"menu");if(menu.Length>0){int rowHeight=menu.Length>7?30:42;int mh=62+menu.Length*rowHeight;int my=Math.Max(188,348-mh/2);Box(g,326,my,720,mh,"#252a33");Border(g,326,my,720,mh,"#7d8faa");Txt(g,S(st,"menuTitle"),342,my+13,685,30,17,"#f0f3fa",false,true);for(int i=0;i<menu.Length;i++){int yy=my+53+i*rowHeight;bool focus=N(st,"focus")==i;if(focus)Box(g,337,yy-3,698,rowHeight-6,"#24527c");string text=Convert.ToString(menu[i]);if(V(st,"on")!=null)text=(N(st,"on")==i?"ON   ":"OFF  ")+text;Txt(g,text,350,yy+1,670,rowHeight-2,rowHeight<42?16:17,"#f0f0f0");if(focus)Pointer(g,997,yy+9);}}
    string toast=S(st,"toast");if(toast.Length>0){bool warning=Convert.ToBoolean(V(st,"warning",false));Box(g,326,502,744,49,warning?"#493a23":"#303f50");Border(g,326,502,744,49,warning?"#dbac54":"#6b8daf");Txt(g,toast,342,517,713,27,16,"#f4f6fb");}
-   Box(g,24,567,1072,22,"#087bbd");Txt(g,"Coding Tools   |   "+S(demo,"category"),37,570,700,20,12,"#ffffff");Txt(g,(index+1)+" / "+count,1017,570,70,20,12,"#ffffff");
+   Box(g,24,567,1072,22,"#087bbd");Txt(g,S(st,"statusText","Coding Tools   |   "+S(demo,"category")),37,570,700,20,12,"#ffffff");Txt(g,(index+1)+" / "+count,1017,570,70,20,12,"#ffffff");
    Txt(g,S(st,"action"),26,610,1060,38,23,"#172d4e",false,true);
    for(int i=0;i<count;i++)Box(g,26+i*33,594,26,4,i==index?"#2367d1":"#c9d4e4");
   }return bmp;
@@ -85,7 +86,7 @@ public static class CodingToolsGifRenderer {
  }
  public static void Build(string manifest,string directory){
   var serializer=new JavaScriptSerializer();serializer.MaxJsonLength=16777216;var source=serializer.DeserializeObject(File.ReadAllText(manifest,Encoding.UTF8));Directory.CreateDirectory(directory);int count=0;
-  foreach(var demo in A(source,"demos")){var steps=A(demo,"steps");string filename=S(demo,"id")+"-"+S(demo,"slug")+".gif";using(var output=new BinaryWriter(File.Create(Path.Combine(directory,filename)))){for(int i=0;i<steps.Length;i++)using(var bitmap=Frame(demo,steps[i],i,steps.Length)){AddGifFrame(output,bitmap,i==steps.Length-1?300:230,i==0);if(i==0)bitmap.Save(Path.Combine(directory,S(demo,"id")+"-"+S(demo,"slug")+".png"),ImageFormat.Png);}output.Write((byte)0x3b);}count++;Console.WriteLine(filename);}
+  foreach(var demo in A(source,"demos").GroupBy(d=>S(d,"category")).SelectMany(group=>group)){var steps=A(demo,"steps");string filename=S(demo,"id")+"-"+S(demo,"slug")+".gif";using(var output=new BinaryWriter(File.Create(Path.Combine(directory,filename)))){for(int i=0;i<steps.Length;i++)using(var bitmap=Frame(demo,steps[i],i,steps.Length,count+1)){AddGifFrame(output,bitmap,i==steps.Length-1?300:230,i==0);if(i==0)bitmap.Save(Path.Combine(directory,S(demo,"id")+"-"+S(demo,"slug")+".png"),ImageFormat.Png);}output.Write((byte)0x3b);}count++;Console.WriteLine(filename);}
   Console.WriteLine("Generated "+count+" animated GIFs.");
  }
 }

@@ -7,8 +7,9 @@ node_modules/
 Thumbs.db
 
 # Packaging / local user data
-/dist/*.vsix
-/dist/*.zip
+/dist/**/*.vsix
+/dist/**/*.zip
+/dist/.coding-tools-*.tmp
 *.code-workspace
 Coding Tools History/
 coding-tools-history/
@@ -28,8 +29,8 @@ __pycache__/
 *.pyc
 
 # Bundled CSS parser runtime (licensed, kept in source and VSIX)
-!vendor/postcss/node_modules/
-!vendor/postcss/node_modules/**
+!src/vendor/postcss/node_modules/
+!src/vendor/postcss/node_modules/**
 
 # Private development conversation archive (never add to Git)
 docs/制作やり取り/非公開_詳細記録/

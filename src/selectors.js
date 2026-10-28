@@ -42,7 +42,7 @@ function maskCommentsAndStrings(source) {
   return characters.join('');
 }
 
-function findCssClasses(source) {
+function findCssIdentifiers(source, kind) {
   const clean = maskCommentsAndStrings(source);
   const found = [];
   let start = 0;
@@ -62,9 +62,17 @@ function findCssClasses(source) {
       // At-rule preludes can contain selector(.class) but are not selectors.
       // Custom property objects / declaration-like values are not rules.
       if (trimmed && !trimmed.startsWith('@') && !/^(?:--)?[\w-]+\s*:\s+/.test(trimmed)) {
-        const pattern = /\.(-?[_a-zA-Z\u0080-\uFFFF][-_a-zA-Z0-9\u0080-\uFFFF]*)/g;
-        let match;
+        const pattern = kind === 'id'
+          ? /#(-?[_a-zA-Z\u0080-\uFFFF][-_a-zA-Z0-9\u0080-\uFFFF]*)/g
+          : /\.(-?[_a-zA-Z\u0080-\uFFFF][-_a-zA-Z0-9\u0080-\uFFFF]*)/g;
+        let match, checked = 0, attributeDepth = 0;
         while ((match = pattern.exec(prelude)) !== null) {
+          while (checked < match.index) {
+            if (prelude[checked] === "[") attributeDepth++;
+            else if (prelude[checked] === "]") attributeDepth--;
+            checked++;
+          }
+          if (attributeDepth) continue;
           found.push({ name: match[1], start: start + match.index, end: start + match.index + match[0].length });
         }
       }
@@ -75,6 +83,9 @@ function findCssClasses(source) {
   }
   return found;
 }
+
+function findCssClasses(source) { return findCssIdentifiers(source, 'class'); }
+function findCssIds(source) { return findCssIdentifiers(source, 'id'); }
 
 function nextClass(classes, cursor, direction) {
   if (classes.length === 0) return null;
@@ -88,7 +99,7 @@ function nextClass(classes, cursor, direction) {
 // Parses class="..." and class='...' (including multiline attributes),
 // skipping comments and <script>/<style> contents. For JSX, className is
 // recognized as well. It is a lightweight scanner, not a full HTML parser.
-function findHtmlClasses(source) {
+function findHtmlIdentifiers(source, kind) {
   const results = [];
   const tokenPattern = /\S+/g;
   const length = source.length;
@@ -153,7 +164,9 @@ function findHtmlClasses(source) {
         while (j < length && !/[\s>]/.test(source[j])) j++;
         value = source.slice(valueStart, j);
       }
-      if (attr === 'class' || attr === 'className') addTokens(value, valueStart);
+      if (kind === 'id'
+        ? attr.toLowerCase() === 'id' && value && !/[\s{}<>]/.test(value)
+        : attr === 'class' || attr === 'className') addTokens(value, valueStart);
     }
     i = Math.max(j, tagOpen + 1);
 
@@ -169,9 +182,12 @@ function findHtmlClasses(source) {
   return results;
 }
 
+function findHtmlClasses(source) { return findHtmlIdentifiers(source, 'class'); }
+function findHtmlIds(source) { return findHtmlIdentifiers(source, 'id'); }
+
 function htmlClassAtCursor(line, column) {
   const token = findHtmlClasses(line).find((item) => item.start <= column && column < item.end);
   return token ? token.name : null;
 }
 
-module.exports = { findCssClasses, nextClass, findHtmlClasses, htmlClassAtCursor };
+module.exports = { findCssClasses, findCssIds, nextClass, findHtmlClasses, findHtmlIds, htmlClassAtCursor };

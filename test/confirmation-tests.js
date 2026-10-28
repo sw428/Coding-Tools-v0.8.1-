@@ -1,7 +1,7 @@
 'use strict';
 const assert = require('node:assert/strict');
 const vm = require('node:vm');
-const {showConfirmation, escapeHtml} = require('../confirmation');
+const {showConfirmation, escapeHtml} = require('../src/confirmation');
 
 function stubPanel() {
   const panel = {disposed:false};

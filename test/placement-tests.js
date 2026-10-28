@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict');
-const p=require('../placement');
+const p=require('../src/placement');
 let passed=0;
 function t(name,fn){fn();passed++;console.log('✓',name)}
 t('Basic HTML sibling order chooses between title and link',()=>{

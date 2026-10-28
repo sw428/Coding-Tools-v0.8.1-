@@ -8,7 +8,6 @@ const OPTIONS=[
   {key:'operation', label:'操作ごとのDiffを記録',description:'拡張機能による1回の編集ごとに記録'},
   {key:'save',label:'ファイル保存時のDiffを記録',description:'保存のたびに前回保存内容との差分を記録'},
   {key:'push',label:'Coding Toolsで行ったGit pushを記録',description:'拡張機能経由で成功したpushのみ記録'},
-  {key:'confirm',label:'CSS適用前の最終確認',description:'OFFでも配置候補の選択は残る'}
 ];
 const SLOT_DISPLAY_OPTIONS=[
   {part:'number',label:'枠番号',description:'(1) / (2) の表示'},
@@ -21,7 +20,8 @@ function slotDisplayKey(n,part){
   return `slot${n}.${part}`;
 }
 const slotOptions=[1,2].flatMap(n=>SLOT_DISPLAY_OPTIONS.map(option=>({key:slotDisplayKey(n,option.part),label:`コピー枠${n}：${option.label}`,description:option.description})));
-const allToggleOptions=[...OPTIONS,...slotOptions];
+const EXTERNAL_PASTE_OPTION={key:'externalPaste',label:'他のアプリへ貼り付け（Windows）',description:'VS Codeを開いている間、他アプリのCtrl+Alt+1/2で保存枠を貼る。通常クリップボードは一時使用後に復元。Macは未対応。'};
+const allToggleOptions=[...OPTIONS,...slotOptions,EXTERNAL_PASTE_OPTION];
 const prefix='codingTools.internal.';
 const allowed=new Set(allToggleOptions.map(x=>x.key));
 function read(context,k,fallback){ return context.globalState?.get(prefix+k,fallback)??fallback; }
@@ -43,7 +43,7 @@ async function setRetentionDays(context,stage,days){
   if(!Number.isInteger(days)||days<MIN_DAYS||days>MAX_DAYS)throw new RangeError('保存日数は1〜360日の整数');
   await context.globalState.update(prefix+`retention.${stage}`,days);
 }
-function registerSettingsUI(vscode,context,changedHandler=async()=>{},displayChangedHandler=async()=>{}){
+function registerSettingsUI(vscode,context,changedHandler=async()=>{},displayChangedHandler=async()=>{},externalChangedHandler=async()=>{}){
   const emitter=new vscode.EventEmitter();
   const STAGE_NAMES={operation:'操作履歴',save:'保存履歴',push:'Git push履歴'};
   const provider={
@@ -52,9 +52,13 @@ function registerSettingsUI(vscode,context,changedHandler=async()=>{},displayCha
       ? slotOptions.filter(option=>option.key.startsWith(`slot${element.n}.`)).map(option=>({...option,kind:'toggle'}))
       : element?[]:[
       {kind:'slotGroup',n:1}, {kind:'slotGroup',n:2},
-      ...OPTIONS.filter(x=>x.key==='confirm').map(x=>({...x,kind:'toggle'})),
+      {...EXTERNAL_PASTE_OPTION,kind:'external'},
       ...Object.keys(DEFAULT_DAYS).map(stage=>({kind:'days',stage})),
-      {kind:'css'}, {kind:'shortcuts'}, {kind:'history'}, {kind:'guide'}, {kind:'about'}
+      {kind:'workflow',label:'ヘルプの表示・表示時間',filter:'help'},
+      {kind:'workflow',label:'コピー時に保持する情報',filter:'copyInformation'},
+      {kind:'workflow',label:'貼り付け時の判断材料',filter:'pasteInformation'},
+      {kind:'workflow',label:'セクション用CSSコメントの登録',filter:'section'},
+      {kind:'css'}, {kind:'shortcuts'}, {kind:'guide'}, {kind:'about'}
     ],
     getTreeItem(item){
       if(item.kind==='slotGroup'){
@@ -63,7 +67,7 @@ function registerSettingsUI(vscode,context,changedHandler=async()=>{},displayCha
         tree.tooltip='番号・コピー／貼り付け・キー・保存内容を個別に表示ON/OFF';
         return tree;
       }
-      if(item.kind==='toggle'){
+      if(item.kind==='toggle'||item.kind==='external'){
         const on=enabled(context,item.key);
         const tree=new vscode.TreeItem(`${on?'☑':'☐'} ${item.label}`,vscode.TreeItemCollapsibleState.None);
         tree.description=on?'ON':'OFF';
@@ -82,12 +86,16 @@ function registerSettingsUI(vscode,context,changedHandler=async()=>{},displayCha
         tree.command={command:'codingTools.chooseRetentionDays',title:'記録・保存期間を選択',arguments:[item.stage]};
         return tree;
       }
-      if(item.kind==='css'||item.kind==='history'){
-        const tree=new vscode.TreeItem(item.kind==='css'?'CSS配置ルールの設定':'履歴を開く',vscode.TreeItemCollapsibleState.None);
-        tree.iconPath=new vscode.ThemeIcon(item.kind==='css'?'settings-gear':'history');
-        tree.command=item.kind==='css'
-          ? {command:'workbench.action.openSettings',title:'CSS設定を開く',arguments:['@ext:elliotveyne.coding-tools']}
-          : {command:'codingTools.showHistoryPanel',title:'履歴を開く'};
+      if(item.kind==='workflow'){
+        const tree=new vscode.TreeItem(item.label,vscode.TreeItemCollapsibleState.None);
+        tree.iconPath=new vscode.ThemeIcon('settings-gear');
+        tree.command={command:'workbench.action.openSettings',title:item.label,arguments:['@ext:elliotveyne.coding-tools '+item.filter]};
+        return tree;
+      }
+      if(item.kind==='css'){
+        const tree=new vscode.TreeItem('CSS配置ルールの設定',vscode.TreeItemCollapsibleState.None);
+        tree.iconPath=new vscode.ThemeIcon('settings-gear');
+        tree.command={command:'workbench.action.openSettings',title:'CSS設定を開く',arguments:['@ext:elliotveyne.coding-tools']};
         return tree;
       }
       if(item.kind==='about'){
@@ -111,6 +119,7 @@ function registerSettingsUI(vscode,context,changedHandler=async()=>{},displayCha
     await setEnabled(context,key,on);
     emitter.fire();
     if(key.startsWith('slot'))await displayChangedHandler();
+    if(key==='externalPaste')await externalChangedHandler();
     vscode.window.setStatusBarMessage(`Coding Tools: ${allToggleOptions.find(x=>x.key===key).label} → ${on?'ON':'OFF'}`,3500);
   });
   const choose=vscode.commands.registerCommand('codingTools.chooseRetentionDays',async stage=>{
@@ -160,11 +169,14 @@ function registerSettingsUI(vscode,context,changedHandler=async()=>{},displayCha
   const open=vscode.commands.registerCommand('codingTools.openSettings',async()=>{
     const items=[
       ...[1,2].map(n=>({label:`コピー枠${n}の表示`,description:'番号・コピー／貼り付け・キー・保存内容',run:()=>chooseSlotDisplay(n)})),
-      {label:'CSS適用前の最終確認',description:enabled(context,'confirm')?'ON':'OFF',run:()=>vscode.commands.executeCommand('codingTools.toggleSetting','confirm')},
       ...Object.keys(DEFAULT_DAYS).map(stage=>({label:`${STAGE_NAMES[stage]}の保存期間`,description:enabled(context,stage)?`${retentionDays(context,stage)}日`:'OFF（記録しない）',run:()=>vscode.commands.executeCommand('codingTools.chooseRetentionDays',stage)})),
+      {label:EXTERNAL_PASTE_OPTION.label,description:enabled(context,'externalPaste')?'ON':'OFF',run:()=>vscode.commands.executeCommand('codingTools.toggleSetting','externalPaste')},
+      {label:'ヘルプの表示・表示時間',description:'既定2秒 / OFFに変更可能',run:()=>vscode.commands.executeCommand('workbench.action.openSettings','@ext:elliotveyne.coding-tools help')},
+      {label:'コピー時に保持する情報',run:()=>vscode.commands.executeCommand('workbench.action.openSettings','@ext:elliotveyne.coding-tools copyInformation')},
+      {label:'貼り付け時の判断材料',run:()=>vscode.commands.executeCommand('workbench.action.openSettings','@ext:elliotveyne.coding-tools pasteInformation')},
+      {label:'セクション用CSSコメントの登録',run:()=>vscode.commands.executeCommand('workbench.action.openSettings','@ext:elliotveyne.coding-tools section')},
       {label:'CSS配置ルールの設定',run:()=>vscode.commands.executeCommand('workbench.action.openSettings','@ext:elliotveyne.coding-tools')},
       {label:'キーボードショートカット一覧',run:()=>vscode.commands.executeCommand('codingTools.openKeyboardShortcuts')},
-      {label:'履歴を開く',run:()=>vscode.commands.executeCommand('codingTools.showHistoryPanel')},
       {label:'GIFで使い方を確認',run:()=>vscode.commands.executeCommand('codingTools.openVisualGuide')},
       {label:'開発方針・データの扱い',run:()=>vscode.commands.executeCommand('markdown.showPreview',vscode.Uri.file(path.join(context.extensionPath,'docs','VISION.md')))},
       {label:'サイドバーで設定を開く',run:async()=>{await vscode.commands.executeCommand('workbench.view.explorer');await vscode.commands.executeCommand('codingTools.settingsView.focus');}}
@@ -172,7 +184,7 @@ function registerSettingsUI(vscode,context,changedHandler=async()=>{},displayCha
     const selected=await vscode.window.showQuickPick(items,{title:'Coding Tools 設定',placeHolder:'変更する設定や開く項目を選択',matchOnDescription:true});
     if(selected)await selected.run();
   });
-  const status=vscode.window.createStatusBarItem('codingTools.settings',vscode.StatusBarAlignment.Right,100);
+  const status=vscode.window.createStatusBarItem('codingTools.settings',vscode.StatusBarAlignment.Right,90);
   status.name='Coding Tools 設定';
   status.text='$(settings-gear) Coding Tools';
   status.tooltip='コピー枠の表示、履歴、CSS、キーなどの設定を開く';
